@@ -245,9 +245,10 @@ export default function AdminLogin() {
 
               <button 
                 type="button"
-                onClick={() => {
-                  supabase.auth.signOut();
+                onClick={async () => {
+                  await supabase.auth.signOut();
                   setStep('credentials');
+                  navigate('/', { replace: true });
                 }}
                 className="w-full text-slate-500 hover:text-slate-300 text-xs font-bold uppercase tracking-widest transition-colors"
               >

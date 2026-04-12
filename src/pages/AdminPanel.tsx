@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
+import { CONFIG } from '../config';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   LayoutDashboard, 
@@ -22,7 +23,8 @@ import {
   HardDrive,
   RefreshCw,
   X,
-  CheckCircle2
+  CheckCircle2,
+  Key
 } from 'lucide-react';
 
 // --- Types ---
@@ -74,7 +76,7 @@ const Toast = ({ message, type, onClose }: { message: string, type: 'success' | 
   </motion.div>
 );
 
-const Modal = ({ show, onClose, title, description, onConfirm, confirmText, confirmColor = 'bg-danger', loading, requireConfirmText }: any) => {
+const Modal = ({ show, onClose, title, description, onConfirm, confirmText, confirmColor = 'bg-danger', loading, requireConfirmText, children }: any) => {
   const [confirmInput, setConfirmInput] = useState('');
   
   if (!show) return null;
@@ -96,6 +98,8 @@ const Modal = ({ show, onClose, title, description, onConfirm, confirmText, conf
               {description}
             </div>
           </div>
+
+          {children}
 
           {requireConfirmText && (
             <div className="space-y-2">
@@ -196,6 +200,88 @@ export default function AdminPanel() {
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3000);
+  };
+
+  const handleUpdatePassword = async (userId: string, newPassword: string, serviceKey: string) => {
+    if (!newPassword || !serviceKey) {
+      showToast('Password and Service Key are required', 'error');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      if (!CONFIG.supabase.url) {
+        throw new Error('Supabase URL is missing in configuration');
+      }
+      // Initialize a temporary admin client
+      const { createClient } = await import('@supabase/supabase-js');
+      const adminClient = createClient(CONFIG.supabase.url, serviceKey, {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      });
+
+      const { error: updateError } = await adminClient.auth.admin.updateUserById(userId, {
+        password: newPassword
+      });
+
+      if (updateError) throw updateError;
+
+      showToast('Password updated successfully', 'success');
+      setModal({ show: false });
+    } catch (err: any) {
+      console.error('Password update error:', err);
+      showToast(err.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const PasswordUpdateModal = ({ user, onClose }: { user: any, onClose: () => void }) => {
+    const [newPass, setNewPass] = useState('');
+    const [sKey, setSKey] = useState(sessionStorage.getItem('temp_service_key') || '');
+
+    const handleConfirm = () => {
+      sessionStorage.setItem('temp_service_key', sKey);
+      handleUpdatePassword(user.id, newPass, sKey);
+    };
+
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">New Password</label>
+          <input 
+            type="text" 
+            value={newPass}
+            onChange={(e) => setNewPass(e.target.value)}
+            placeholder="Enter new password"
+            className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-primary transition-all text-sm"
+          />
+        </div>
+        <div className="space-y-2">
+          <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Supabase Service Role Key</label>
+          <input 
+            type="password" 
+            value={sKey}
+            onChange={(e) => setSKey(e.target.value)}
+            placeholder="Paste your service_role key"
+            className="w-full p-4 bg-gray-50 border border-gray-100 rounded-xl focus:outline-none focus:border-primary transition-all text-sm font-mono"
+          />
+          <p className="text-[10px] text-slate-400 leading-tight">
+            Find this in Supabase Dashboard → Settings → API → service_role key. 
+            <br/><strong>Warning:</strong> This key bypasses all security. Use with caution.
+          </p>
+        </div>
+        <button
+          disabled={loading || !newPass || !sKey}
+          onClick={handleConfirm}
+          className="w-full py-4 bg-primary text-white font-bold rounded-xl shadow-lg shadow-primary/20 transition-all active:scale-95 disabled:opacity-50"
+        >
+          {loading ? 'Updating...' : 'Update Password'}
+        </button>
+      </div>
+    );
   };
 
   // --- Data Fetching ---
@@ -509,7 +595,21 @@ export default function AdminPanel() {
                   </span>
                 </td>
                 <td className="p-6 text-xs text-slate-500">{new Date(u.created_at).toLocaleDateString()}</td>
-                <td className="p-6 text-right">
+                <td className="p-6 text-right flex items-center justify-end gap-2">
+                  <button 
+                    onClick={() => setModal({
+                      show: true,
+                      title: 'Change Password',
+                      description: `Set a new password for ${u.full_name}.`,
+                      confirmText: 'Update',
+                      confirmColor: 'hidden', // Hide default button
+                      children: <PasswordUpdateModal user={u} onClose={() => setModal({ show: false })} />
+                    })}
+                    className="p-2 text-primary hover:bg-primary/5 rounded-lg transition-colors"
+                    title="Change Password"
+                  >
+                    <Key size={18} />
+                  </button>
                   <button 
                     onClick={() => setModal({
                       show: true,
