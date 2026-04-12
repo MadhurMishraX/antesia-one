@@ -12,7 +12,8 @@ export default function Dashboard() {
   const { profile } = useAuth();
   const [stats, setStats] = useState<any>(null);
   const [computedRank, setComputedRank] = useState<number | null>(null);
-  const [broadcast, setBroadcast] = useState<any>(null);
+  const [broadcasts, setBroadcasts] = useState<any[]>([]);
+  const [showAllBroadcasts, setShowAllBroadcasts] = useState(false);
   const [tasks, setTasks] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -38,14 +39,13 @@ export default function Dashboard() {
       setComputedRank(rank);
     }
 
-    // Fetch latest broadcast
-    const { data: broadcastData } = await supabase
+    // Fetch latest 5 broadcasts
+    const { data: broadcastsData } = await supabase
       .from('broadcasts')
       .select('*, profiles(full_name)')
       .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
-    setBroadcast(broadcastData);
+      .limit(5);
+    setBroadcasts(broadcastsData || []);
 
     // Fetch tasks (due assignments)
     const { data: tasksData } = await supabase
@@ -191,22 +191,62 @@ export default function Dashboard() {
           </h3>
           <Link to="/broadcast-history" className="text-[10px] font-bold text-primary uppercase tracking-widest hover:underline">View History</Link>
         </div>
-        {broadcast ? (
-          <div className={`bg-white p-4 rounded-card shadow-sm border-l-4 ${broadcast.is_urgent ? 'border-danger' : 'border-primary'} relative`}>
-            {broadcast.is_urgent && (
-              <span className="absolute top-3 right-3 bg-danger text-[8px] font-bold text-white px-2 py-0.5 rounded-pill">
-                🚨 URGENT
-              </span>
+        {broadcasts.length > 0 ? (
+          <div className="space-y-3">
+            {/* Latest Broadcast - Bigger */}
+            <div className={`bg-white p-5 rounded-card shadow-md border-l-4 ${broadcasts[0].is_urgent ? 'border-danger' : 'border-primary'} relative`}>
+              {broadcasts[0].is_urgent && (
+                <span className="absolute top-3 right-3 bg-danger text-[8px] font-bold text-white px-2 py-0.5 rounded-pill">
+                  🚨 URGENT
+                </span>
+              )}
+              <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">
+                {broadcasts[0].profiles?.full_name}
+              </p>
+              <p className="text-base mt-1 font-bold leading-relaxed">
+                {broadcasts[0].message_text}
+              </p>
+              <p className="text-[10px] text-text-muted text-right mt-2">
+                {new Date(broadcasts[0].created_at).toLocaleDateString()}
+              </p>
+            </div>
+
+            {/* Other Broadcasts - Smaller */}
+            {broadcasts.length > 1 && (
+              <div className="space-y-2">
+                {!showAllBroadcasts ? (
+                  <button 
+                    onClick={() => setShowAllBroadcasts(true)}
+                    className="w-full py-2 text-[10px] font-bold text-primary uppercase tracking-widest hover:bg-primary/5 rounded-lg transition-all"
+                  >
+                    Show More ({broadcasts.length - 1})
+                  </button>
+                ) : (
+                  <>
+                    {broadcasts.slice(1).map((b) => (
+                      <div key={b.id} className={`bg-white p-3 rounded-card shadow-sm border-l-2 ${b.is_urgent ? 'border-danger' : 'border-primary'} relative`}>
+                        <p className="text-[9px] text-text-muted font-bold uppercase tracking-wider flex justify-between items-center">
+                          {b.profiles?.full_name}
+                          {b.is_urgent && <span className="text-danger">🚨</span>}
+                        </p>
+                        <p className="text-xs mt-1 leading-relaxed text-slate-700">
+                          {b.message_text}
+                        </p>
+                        <p className="text-[8px] text-text-muted text-right mt-1">
+                          {new Date(b.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                    ))}
+                    <button 
+                      onClick={() => setShowAllBroadcasts(false)}
+                      className="w-full py-2 text-[10px] font-bold text-text-muted uppercase tracking-widest hover:bg-gray-50 rounded-lg transition-all"
+                    >
+                      Show Less
+                    </button>
+                  </>
+                )}
+              </div>
             )}
-            <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">
-              {broadcast.profiles?.full_name}
-            </p>
-            <p className="text-sm mt-1 leading-relaxed">
-              {broadcast.message_text}
-            </p>
-            <p className="text-[10px] text-text-muted text-right mt-2">
-              {new Date(broadcast.created_at).toLocaleDateString()}
-            </p>
           </div>
         ) : (
           <div className="bg-white p-4 rounded-card shadow-sm border border-dashed border-gray-200 text-center text-text-muted text-sm italic">

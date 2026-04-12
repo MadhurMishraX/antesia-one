@@ -10,7 +10,8 @@ import TopBar from '../../components/TopBar';
 export default function Command() {
   const { profile } = useAuth();
   const navigate = useNavigate();
-  const [pinnedBroadcast, setPinnedBroadcast] = useState<any>(null);
+  const [broadcasts, setBroadcasts] = useState<any[]>([]);
+  const [showAllBroadcasts, setShowAllBroadcasts] = useState(false);
   const [classHealth, setClassHealth] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -23,15 +24,13 @@ export default function Command() {
     async function fetchData() {
       if (!profile) return;
 
-      // Fetch pinned broadcast
+      // Fetch latest 5 broadcasts
       const { data: b } = await supabase
         .from('broadcasts')
         .select('*')
-        .eq('is_pinned', true)
         .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
-      setPinnedBroadcast(b);
+        .limit(5);
+      setBroadcasts(b || []);
 
       // Fetch class health (modules and their avg scores)
       const { data: modules } = await supabase
@@ -74,7 +73,7 @@ export default function Command() {
     }).select().single();
 
     if (!error) {
-      setPinnedBroadcast(data);
+      setBroadcasts(prev => [data, ...prev].slice(0, 5));
       setMessage('');
       setShowBroadcastForm(false);
 
@@ -116,23 +115,63 @@ export default function Command() {
             <Megaphone size={16} className="text-primary" />
             Broadcast Station
           </h3>
-          {pinnedBroadcast && (
+          {broadcasts.length > 0 && (
             <span className="text-[8px] font-bold bg-primary/10 text-primary px-2 py-0.5 rounded-pill uppercase">Active</span>
           )}
         </div>
         
-        {pinnedBroadcast ? (
-          <div className={`p-5 rounded-[24px] shadow-md border relative overflow-hidden transition-all ${pinnedBroadcast.is_urgent ? 'bg-danger/5 border-danger/20' : 'bg-primary/5 border-primary/20'}`}>
-            <div className={`absolute top-0 left-0 w-1.5 h-full ${pinnedBroadcast.is_urgent ? 'bg-danger' : 'bg-primary'}`} />
-            <p className="text-sm font-bold leading-relaxed text-text-primary">{pinnedBroadcast.message_text}</p>
-            <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100/50">
-              <span className={`text-[8px] font-bold px-2 py-0.5 rounded-pill uppercase ${pinnedBroadcast.is_urgent ? 'bg-danger text-white' : 'bg-primary text-white'}`}>
-                {pinnedBroadcast.is_urgent ? 'Urgent' : 'Active'}
-              </span>
-              <p className="text-[10px] font-bold text-text-muted">
-                {new Date(pinnedBroadcast.created_at).toLocaleDateString()}
-              </p>
+        {broadcasts.length > 0 ? (
+          <div className="space-y-3">
+            {/* Latest Broadcast - Bigger */}
+            <div className={`p-5 rounded-[24px] shadow-md border relative overflow-hidden transition-all ${broadcasts[0].is_urgent ? 'bg-danger/5 border-danger/20' : 'bg-primary/5 border-primary/20'}`}>
+              <div className={`absolute top-0 left-0 w-1.5 h-full ${broadcasts[0].is_urgent ? 'bg-danger' : 'bg-primary'}`} />
+              <p className="text-base font-bold leading-relaxed text-text-primary">{broadcasts[0].message_text}</p>
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-100/50">
+                <span className={`text-[8px] font-bold px-2 py-0.5 rounded-pill uppercase ${broadcasts[0].is_urgent ? 'bg-danger text-white' : 'bg-primary text-white'}`}>
+                  {broadcasts[0].is_urgent ? 'Urgent' : 'Active'}
+                </span>
+                <p className="text-[10px] font-bold text-text-muted">
+                  {new Date(broadcasts[0].created_at).toLocaleDateString()}
+                </p>
+              </div>
             </div>
+
+            {/* Other Broadcasts - Smaller */}
+            {broadcasts.length > 1 && (
+              <div className="space-y-2">
+                {!showAllBroadcasts ? (
+                  <button 
+                    onClick={() => setShowAllBroadcasts(true)}
+                    className="w-full py-2 text-[10px] font-bold text-primary uppercase tracking-widest hover:bg-primary/5 rounded-lg transition-all"
+                  >
+                    Show More ({broadcasts.length - 1})
+                  </button>
+                ) : (
+                  <>
+                    {broadcasts.slice(1).map((b) => (
+                      <div key={b.id} className={`p-4 rounded-[16px] border relative overflow-hidden transition-all ${b.is_urgent ? 'bg-danger/5 border-danger/10' : 'bg-white border-gray-100'}`}>
+                        <div className={`absolute top-0 left-0 w-1 h-full ${b.is_urgent ? 'bg-danger' : 'bg-primary'}`} />
+                        <p className="text-xs font-medium text-text-primary leading-relaxed">{b.message_text}</p>
+                        <div className="flex items-center justify-between mt-2">
+                          <span className={`text-[7px] font-bold px-1.5 py-0.5 rounded-pill uppercase ${b.is_urgent ? 'bg-danger text-white' : 'bg-primary text-white'}`}>
+                            {b.is_urgent ? 'Urgent' : 'Active'}
+                          </span>
+                          <p className="text-[9px] font-bold text-text-muted">
+                            {new Date(b.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                    <button 
+                      onClick={() => setShowAllBroadcasts(false)}
+                      className="w-full py-2 text-[10px] font-bold text-text-muted uppercase tracking-widest hover:bg-gray-50 rounded-lg transition-all"
+                    >
+                      Show Less
+                    </button>
+                  </>
+                )}
+              </div>
+            )}
           </div>
         ) : (
           <div className="bg-white p-8 rounded-[24px] shadow-sm border border-dashed border-gray-200 text-center">
