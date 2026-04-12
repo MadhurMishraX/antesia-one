@@ -503,8 +503,8 @@ Start with this header:
             >
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h3 className="text-2xl font-bold">M-Markup Guide</h3>
-                  <p className="text-xs font-bold text-text-muted uppercase tracking-widest mt-1">Format Specification</p>
+                  <h3 className="text-2xl font-bold">WHAT IS M-MARKUP?</h3>
+                  <p className="text-xs font-bold text-text-muted uppercase tracking-widest mt-1">M-Markup (or Madhur's Markup)</p>
                 </div>
                 <button onClick={() => setShowInfo(false)} className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 text-text-muted">
                   <X size={24} />
@@ -512,6 +512,10 @@ Start with this header:
               </div>
               
               <div className="space-y-8">
+                <p className="text-sm text-text-muted leading-relaxed">
+                  M-Markup is a high-speed shorthand used to create educational modules in seconds. It allows you to turn raw text into structured questions without manual data entry.
+                </p>
+
                 <div className="space-y-4">
                   <h4 className="font-bold text-sm uppercase tracking-widest">Key Rules:</h4>
                   <ul className="space-y-3">
@@ -531,12 +535,12 @@ Start with this header:
 
                 <div className="space-y-6">
                   <div className="space-y-2">
-                    <h4 className="font-bold text-sm uppercase tracking-widest">How to use AI to generate questions</h4>
+                    <h4 className="font-bold text-sm uppercase tracking-widest">How to use</h4>
                     <ol className="space-y-3">
                       {[
-                        'Type or paste your questions in any format (handwritten, PDF text, your own words) into any AI',
-                        'Paste the prompt below it and send',
-                        'Copy the returned M-Markup code and paste it into the text box above'
+                        'Copy your raw questions (from a PDF, book, or notes).',
+                        'Paste them into any AI along with the prompt below.',
+                        'Copy the code the AI gives you and paste it into the M-Markup Engine.'
                       ].map((step, i) => (
                         <li key={i} className="flex items-start gap-3 text-sm text-text-muted">
                           <span className="font-bold text-primary">{i + 1}.</span>
@@ -547,7 +551,8 @@ Start with this header:
                   </div>
 
                   <div className="bg-slate-900 p-6 rounded-[20px] font-mono text-xs text-slate-300 relative group">
-                    <pre className="whitespace-pre-wrap">{`Convert the questions above into M-Markup format using these rules:
+                    <pre className="whitespace-pre-wrap">{`Return the entire response wrapped in a single code block.
+Convert the questions above into M-Markup format using these rules:
 
 Each question starts with ?N.type where type is:
 .m  = single correct MCQ:   ?1.m{Question}[Option|*Correct|Option]
