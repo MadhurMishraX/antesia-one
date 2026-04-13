@@ -288,6 +288,7 @@ export default function AdminPanel() {
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
+    setData([]);
     
     try {
       if (activeSection === 'overview') {
@@ -1001,7 +1002,7 @@ export default function AdminPanel() {
             <div key={bucketData.bucket} className="space-y-4">
               <div className="flex items-center justify-between">
                 <h4 className="font-bold text-sm uppercase tracking-widest text-slate-400">{bucketData.bucket}</h4>
-                <p className="text-xs font-bold text-slate-400">{bucketData.files.length} Files</p>
+                <p className="text-xs font-bold text-slate-400">{(bucketData.files?.length || 0)} Files</p>
               </div>
               <div className="bg-gray-50/50 rounded-2xl border border-gray-100 overflow-hidden">
                 <table className="w-full text-left">
@@ -1013,7 +1014,7 @@ export default function AdminPanel() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {bucketData.files.map((f: any) => (
+                    {(bucketData.files || []).map((f: any) => (
                       <tr key={f.name}>
                         <td className="p-4 text-xs font-medium text-slate-600 truncate max-w-[200px]">{f.name}</td>
                         <td className="p-4 text-xs text-slate-400">{(f.metadata?.size / 1024).toFixed(1)} KB</td>
@@ -1027,7 +1028,7 @@ export default function AdminPanel() {
                         </td>
                       </tr>
                     ))}
-                    {bucketData.files.length === 0 && (
+                    {(bucketData.files?.length || 0) === 0 && (
                       <tr>
                         <td colSpan={3} className="p-8 text-center text-xs text-slate-400 font-medium italic">No files in this bucket</td>
                       </tr>
