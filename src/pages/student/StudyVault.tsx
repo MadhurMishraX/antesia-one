@@ -37,7 +37,6 @@ export default function StudyVault() {
           assignment_submissions!left(*)
         `)
         .eq('is_published', true)
-        .eq('assignment_submissions.student_id', profile.id)
         .order('created_at', { ascending: false });
 
       if (subject !== 'All Subjects') {
@@ -51,7 +50,8 @@ export default function StudyVault() {
           ? module.assignment_submissions 
           : (module.assignment_submissions ? [module.assignment_submissions] : []);
           
-        const submission = subs[0]; // Should only be one due to filter
+        // Find the submission for THIS student
+        const submission = subs.find((s: any) => s.student_id === profile.id);
         return { ...module, userSubmission: submission };
       }).filter((module: any) => {
         const status = module.userSubmission?.status || 'not_started';

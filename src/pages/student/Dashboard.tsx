@@ -52,18 +52,25 @@ export default function Dashboard() {
       .from('modules')
       .select('*, assignment_submissions!left(*)')
       .eq('is_published', true)
-      .eq('assignment_submissions.student_id', profile.id)
-      .order('created_at', { ascending: false })
-      .limit(3);
+      .order('created_at', { ascending: false });
     
     // Process tasks
-    const tasksWithUserSub = (tasksData || []).map(task => {
-      const subs = Array.isArray(task.assignment_submissions) 
-        ? task.assignment_submissions 
-        : (task.assignment_submissions ? [task.assignment_submissions] : []);
-      const userSub = subs[0]; // Should only be one due to filter
-      return { ...task, userSub };
-    });
+    const tasksWithUserSub = (tasksData || [])
+      .map(task => {
+        const subs = Array.isArray(task.assignment_submissions) 
+          ? task.assignment_submissions 
+          : (task.assignment_submissions ? [task.assignment_submissions] : []);
+        // Find the submission for THIS student
+        const userSub = subs.find(s => s.student_id === profile.id);
+        return { ...task, userSub };
+      })
+      // Filter: Only show assignments that are NOT submitted and NOT missed
+      .filter(task => {
+        const status = task.userSub?.status || 'not_started';
+        const isMissed = new Date(task.due_date) < new Date() && status !== 'submitted';
+        return status !== 'submitted' && !isMissed;
+      })
+      .slice(0, 3);
 
     setTasks(tasksWithUserSub);
 

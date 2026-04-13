@@ -5,9 +5,15 @@ import { User } from '@supabase/supabase-js';
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
+  adminProfile: Profile | null;
   loading: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  impersonatedProfile: Profile | null;
+  isImpersonating: boolean;
+  activeProfile: Profile | null;
+  startImpersonation: (userId: string) => Promise<void>;
+  stopImpersonation: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,6 +22,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [impersonatedProfile, setImpersonatedProfile] = useState<Profile | null>(null);
 
   const fetchProfile = async (userId: string) => {
     const profileData = await getProfile(userId);
@@ -28,6 +35,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       await fetchProfile(user.id);
     }
   };
+
+  const startImpersonation = async (userId: string) => {
+    if (profile?.role !== 'admin') return;
+    const profileData = await getProfile(userId);
+    if (profileData) setImpersonatedProfile(profileData);
+  };
+
+  const stopImpersonation = () => setImpersonatedProfile(null);
+
+  const activeProfile = impersonatedProfile ?? profile;
+  const isImpersonating = impersonatedProfile !== null;
 
   useEffect(() => {
     // Check active sessions and subscribe to auth changes
@@ -59,7 +77,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, profile, loading, signOut, refreshProfile }}>
+    <AuthContext.Provider value={{
+      user,
+      profile: activeProfile,
+      adminProfile: profile,
+      loading,
+      signOut,
+      refreshProfile,
+      impersonatedProfile,
+      isImpersonating,
+      activeProfile,
+      startImpersonation,
+      stopImpersonation
+    }}>
       {children}
     </AuthContext.Provider>
   );
