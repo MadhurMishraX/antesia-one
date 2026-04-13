@@ -32,7 +32,7 @@ export default function Class() {
     // 1. Fetch all students and their stats
     const { data: studentProfiles } = await supabase
       .from('profiles')
-      .select('*, student_stats!student_stats_student_id_fkey(*)')
+      .select('*, student_stats(*)')
       .eq('role', 'student');
 
     // 2. Fetch all submissions across all modules
@@ -51,7 +51,10 @@ export default function Class() {
 
     // 3. Process data
     const processedStudents = studentProfiles.map(s => {
-      const stats = s.student_stats?.[0] || {};
+      const stats = Array.isArray(s.student_stats) 
+        ? s.student_stats[0] 
+        : (s.student_stats || null);
+      
       const studentSubs = (allSubmissions || []).filter(sub => sub.student_id === s.id);
       
       // Calculate overall metrics
@@ -61,7 +64,7 @@ export default function Class() {
       
       const avgScore = studentSubs.length > 0 ? (totalScore / totalQuestions) * 100 : 0;
       const avgTime = studentSubs.length > 0 ? totalTime / studentSubs.length : 0;
-      const accuracy = stats.accuracy_all_time || avgScore;
+      const accuracy = stats?.accuracy_all_time || avgScore;
 
       // Group by subject
       const subjectMetrics = studentSubs.reduce((acc: any, sub: any) => {
@@ -87,7 +90,7 @@ export default function Class() {
         ...s,
         stats,
         overall: {
-          xp: stats.total_xp || 0,
+          xp: stats?.total_xp ?? 0,
           avgScore,
           avgTime,
           accuracy,
@@ -105,6 +108,8 @@ export default function Class() {
 
   useEffect(() => {
     fetchClassData();
+    const interval = setInterval(fetchClassData, 30000);
+    return () => clearInterval(interval);
   }, [profile]);
 
   const filteredStudents = [...students]
@@ -260,7 +265,7 @@ export default function Class() {
                   {sortBy === 'xp' ? `${s.overall.xp} XP` : sortBy === 'accuracy' ? `${s.overall.accuracy.toFixed(2)}%` : `${s.overall.avgScore.toFixed(2)}%`}
                 </p>
                 <p className="text-[10px] text-text-muted font-bold uppercase tracking-widest">
-                  {sortBy === 'xp' ? s.stats.current_league : sortBy === 'accuracy' ? 'Accuracy' : 'Avg Score'}
+                  {sortBy === 'xp' ? (s.stats?.current_league || 'Bronze') : sortBy === 'accuracy' ? 'Accuracy' : 'Avg Score'}
                 </p>
               </div>
               <ChevronRight size={16} className="text-gray-300" />
@@ -306,7 +311,7 @@ export default function Class() {
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold tracking-tight">{selectedStudent.full_name}</h2>
-                    <p className="text-white/70 font-medium text-sm">{selectedStudent.stats.current_league} League Student</p>
+                    <p className="text-white/70 font-medium text-sm">{(selectedStudent.stats?.current_league || 'Bronze')} League Student</p>
                   </div>
                 </div>
               </div>

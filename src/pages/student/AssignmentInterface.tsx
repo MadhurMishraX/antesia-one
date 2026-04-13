@@ -132,7 +132,7 @@ export default function AssignmentInterface() {
     return () => clearInterval(timerRef.current);
   }, [id, profile, navigate]);
 
-  const saveAnswer = async (qId: string, data: any, questionNumber?: number) => {
+  const saveAnswer = async (qId: string, data: any) => {
     if (!submissionId) return;
 
     // Update local state immediately for UI responsiveness
@@ -146,7 +146,6 @@ export default function AssignmentInterface() {
       .upsert({
         submission_id: submissionId,
         question_id: qId,
-        question_number: questionNumber || 0,
         student_answer: data.student_answer || null,
         updated_at: new Date().toISOString()
       }, { onConflict: 'submission_id,question_id' });
@@ -159,7 +158,7 @@ export default function AssignmentInterface() {
 
   // Debounce helper for text answers
   const timeoutRef = useRef<any>(null);
-  const handleTextChange = (qId: string, text: string, qNum: number) => {
+  const handleTextChange = (qId: string, text: string) => {
     setAnswers(prev => ({
       ...prev,
       [qId]: { ...prev[qId], student_answer: text }
@@ -167,7 +166,7 @@ export default function AssignmentInterface() {
 
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
-      saveAnswer(qId, { student_answer: text }, qNum);
+      saveAnswer(qId, { student_answer: text });
     }, 1000);
   };
 
@@ -230,14 +229,11 @@ export default function AssignmentInterface() {
         answerUpdates.push({
           submission_id: submissionId,
           question_id: q.id,
-          question_number: q.question_number || 0,
           student_answer: studentAnswerText || null,
           is_correct: isCorrect,
           updated_at: new Date().toISOString()
         });
       });
-
-      console.log('FINAL SCORE:', score, 'TOTAL:', totalQuestions, 'ANSWER UPDATES:', answerUpdates);
 
       // 3. Update ALL answers in DB (ensures skipped questions are recorded)
       if (answerUpdates.length > 0) {
@@ -249,13 +245,13 @@ export default function AssignmentInterface() {
 
       // 5. Calculate XP (Only for MCQs initially)
       const { data: moduleData } = await supabase.from('modules').select('xp_reward').eq('id', id).single();
-      const xpEarned = Math.round((score / totalQuestions) * (moduleData?.xp_reward || 0));
+      const xpEarned = totalQuestions > 0 
+        ? Math.round((score / totalQuestions) * (moduleData?.xp_reward || 0))
+        : 0;
 
       // 6. Update submission
       const timeTaken = 1800 - timeLeft;
       
-      console.log('FINAL SCORE:', score, 'TOTAL:', totalQuestions, 'ANSWER UPDATES:', answerUpdates);
-
       const { error: subUpdateError } = await supabase
         .from('assignment_submissions')
         .update({
@@ -324,14 +320,6 @@ export default function AssignmentInterface() {
           ? currentAccuracy
           : ((statsAccuracy * 0.7) + (currentAccuracy * 0.3));
 
-        console.log('SUBMITTING STATS:', {
-          newTotalXp,
-          newLeague,
-          newStreak,
-          todayStr,
-          newAccuracy: newAccuracy.toFixed(2)
-        });
-
         const { error: statsUpdateError } = await supabase
           .from('student_stats')
           .update({
@@ -345,12 +333,6 @@ export default function AssignmentInterface() {
           .eq('student_id', profile.id);
 
         if (statsUpdateError) console.error('XP/Stats Update Error:', statsUpdateError);
-        const { data: verifyXp } = await supabase
-          .from('student_stats')
-          .select('total_xp')
-          .eq('student_id', profile.id)
-          .single();
-        console.log('VERIFY XP AFTER SUBMISSION:', verifyXp);
       }
 
       navigate(`/celebration/${submissionId}`);
@@ -473,8 +455,7 @@ export default function AssignmentInterface() {
                   key={opt.option_id}
                   onClick={() => saveAnswer(
                     currentQ.id,
-                    { student_answer: opt.option_id },
-                    currentQ.question_number
+                    { student_answer: opt.option_id }
                   )}
                   className={`w-full p-4 rounded-card border-2 text-left transition-all flex items-center justify-between group ${
                     currentAns.student_answer === opt.option_id 
@@ -500,7 +481,7 @@ export default function AssignmentInterface() {
               <textarea
                 placeholder="Type your answer..."
                 value={currentAns.student_answer || ''}
-                onChange={(e) => handleTextChange(currentQ.id, e.target.value, currentQ.question_number)}
+                onChange={(e) => handleTextChange(currentQ.id, e.target.value)}
                 className="w-full h-40 p-4 bg-white border-2 border-gray-100 rounded-card focus:outline-none focus:border-primary transition-all resize-none font-medium"
               />
             </div>
