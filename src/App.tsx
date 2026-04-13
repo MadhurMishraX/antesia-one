@@ -7,8 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import { StudentLayout, TeacherLayout } from './components/Layout';
-import { LogOut, Eye, ShieldAlert } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Student Pages
 import Dashboard from './pages/student/Dashboard';
@@ -35,10 +34,9 @@ import ModuleDetailView from './pages/teacher/ModuleDetailView';
 import ModuleSubmissions from './pages/teacher/ModuleSubmissions';
 import AdminPanel from './pages/AdminPanel';
 import AdminLogin from './pages/AdminLogin';
-import { ErrorBoundary } from './components/ErrorBoundary';
 
 function AppRoutes() {
-  const { user, profile, adminProfile, loading, isImpersonating, activeProfile, stopImpersonation } = useAuth();
+  const { user, profile, loading } = useAuth();
   const location = useLocation();
 
   if (loading) {
@@ -59,8 +57,8 @@ function AppRoutes() {
     );
   }
 
-  // Admin Access (Real session, not impersonating)
-  if (adminProfile?.role === 'admin' && !isImpersonating) {
+  // Admin Access
+  if (profile?.role === 'admin') {
     const isVerified = sessionStorage.getItem('admin_verified') === 'true';
     const isAtAdminLogin = location.pathname === '/admin-login';
     
@@ -70,23 +68,21 @@ function AppRoutes() {
     }
 
     return (
-      <>
-        <Routes>
-          <Route path="/admin" element={isVerified ? <AdminPanel /> : <Navigate to="/admin-login" replace />} />
-          <Route path="/admin-login" element={isVerified ? <Navigate to="/admin" replace /> : <AdminLogin />} />
-          <Route path="*" element={<Navigate to={isVerified ? "/admin" : "/admin-login"} replace />} />
-        </Routes>
-      </>
+      <Routes>
+        <Route path="/admin" element={isVerified ? <AdminPanel /> : <Navigate to="/admin-login" replace />} />
+        <Route path="/admin-login" element={isVerified ? <Navigate to="/admin" replace /> : <AdminLogin />} />
+        <Route path="*" element={<Navigate to={isVerified ? "/admin" : "/admin-login"} replace />} />
+      </Routes>
     );
   }
 
   // If a non-admin tries to access /admin or /admin-login, redirect them appropriately
-  if (location.pathname.startsWith('/admin') && !isImpersonating) {
+  if (location.pathname.startsWith('/admin')) {
     return <Navigate to="/" replace />;
   }
 
   const renderRoutes = () => {
-    if (activeProfile?.role === 'teacher') {
+    if (profile?.role === 'teacher') {
       return (
         <Routes>
           <Route element={<TeacherLayout />}>
@@ -129,45 +125,7 @@ function AppRoutes() {
     );
   };
 
-  return (
-    <>
-      <AnimatePresence>
-        {isImpersonating && (
-          <motion.div 
-            initial={{ y: -100 }}
-            animate={{ y: 0 }}
-            exit={{ y: -100 }}
-            className="fixed top-0 left-0 right-0 z-[9999] bg-slate-900 text-white px-6 py-3 flex items-center justify-between shadow-2xl border-b border-white/10"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary">
-                <Eye size={18} />
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">Impersonating User</p>
-                <p className="text-sm font-bold">{activeProfile?.full_name} <span className="text-primary ml-2">({activeProfile?.role})</span></p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-warning/10 text-warning rounded-full text-[10px] font-bold uppercase tracking-widest border border-warning/20">
-                <ShieldAlert size={12} /> Read-Only Mode Recommended
-              </div>
-              <button 
-                onClick={stopImpersonation}
-                className="flex items-center gap-2 px-4 py-2 bg-danger text-white rounded-xl text-xs font-bold hover:bg-danger/80 transition-all active:scale-95 shadow-lg shadow-danger/20"
-              >
-                <LogOut size={14} />
-                Exit Session
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-      <div className={isImpersonating ? 'pt-16' : ''}>
-        {renderRoutes()}
-      </div>
-    </>
-  );
+  return renderRoutes();
 }
 
 export default function App() {

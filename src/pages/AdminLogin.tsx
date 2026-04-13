@@ -10,7 +10,7 @@ const ADMIN_EMAIL = CONFIG.admin.email;
 const ADMIN_PIN = CONFIG.admin.pin;
 
 export default function AdminLogin() {
-  const { user, profile, adminProfile, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const [step, setStep] = useState<'credentials' | 'pin'>('credentials');
   const [isInitializing, setIsInitializing] = useState(true);
   const [email, setEmail] = useState(ADMIN_EMAIL);
@@ -24,14 +24,14 @@ export default function AdminLogin() {
   useEffect(() => {
     if (authLoading) return;
 
-    if (user && adminProfile?.role === 'admin') {
+    if (user && profile?.role === 'admin') {
       const isVerified = sessionStorage.getItem('admin_verified') === 'true';
       if (isVerified) {
         navigate('/admin', { replace: true });
       } else {
         setStep('pin');
       }
-    } else if (user && adminProfile?.role !== 'admin') {
+    } else if (user && profile?.role !== 'admin') {
       // If logged in as non-admin, kick them out
       supabase.auth.signOut();
       setStep('credentials');

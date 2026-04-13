@@ -24,8 +24,7 @@ import {
   RefreshCw,
   X,
   CheckCircle2,
-  Key,
-  Eye
+  Key
 } from 'lucide-react';
 
 // --- Types ---
@@ -171,7 +170,7 @@ const Pagination = ({ page, totalPages, onPageChange }: { page: number, totalPag
 // --- Main Component ---
 
 export default function AdminPanel() {
-  const { profile, signOut, startImpersonation } = useAuth();
+  const { profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<AdminSection>('overview');
   const [loading, setLoading] = useState(true);
@@ -598,16 +597,6 @@ export default function AdminPanel() {
                 </td>
                 <td className="p-6 text-xs text-slate-500">{new Date(u.created_at).toLocaleDateString()}</td>
                 <td className="p-6 text-right flex items-center justify-end gap-2">
-                  <button 
-                    onClick={async () => {
-                      await startImpersonation(u.id);
-                      navigate('/');
-                    }}
-                    className="p-2 text-secondary hover:bg-secondary/5 rounded-lg transition-colors"
-                    title="Impersonate User"
-                  >
-                    <Eye size={18} />
-                  </button>
                   <button 
                     onClick={() => setModal({
                       show: true,
