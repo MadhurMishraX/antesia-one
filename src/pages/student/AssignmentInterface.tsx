@@ -146,7 +146,7 @@ export default function AssignmentInterface() {
       .upsert({
         submission_id: submissionId,
         question_id: qId,
-        question_number: qNum || 0, // Fallback to 0 if null to satisfy constraint
+        question_number: Number(qNum) || 0, // Explicitly cast and fallback to 0 if null
         student_answer: data.student_answer || null,
         answer_status: 'answered',
         updated_at: new Date().toISOString()
@@ -227,10 +227,11 @@ export default function AssignmentInterface() {
           isCorrect = false;
         }
         
+        const qNumber = Number(q.question_number) || (index + 1);
         answerUpdates.push({
           submission_id: submissionId,
           question_id: q.id,
-          question_number: q.question_number || (index + 1), // Fallback to index if null
+          question_number: qNumber, // Use casted number or index fallback
           student_answer: studentAnswerText || null,
           answer_status: studentAnswerText.trim() ? 'answered' : 'skipped',
           is_correct: isCorrect,
