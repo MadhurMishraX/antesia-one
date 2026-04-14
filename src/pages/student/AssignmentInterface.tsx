@@ -132,13 +132,13 @@ export default function AssignmentInterface() {
     return () => clearInterval(timerRef.current);
   }, [id, profile, navigate]);
 
-  const saveAnswer = async (qId: string, data: any) => {
+  const saveAnswer = async (qId: string, qNum: number, data: any) => {
     if (!submissionId) return;
 
     // Update local state immediately for UI responsiveness
     setAnswers(prev => ({
       ...prev,
-      [qId]: { ...data }
+      [qId]: { ...data, status: 'answered' }
     }));
 
     const { error } = await supabase
@@ -146,27 +146,28 @@ export default function AssignmentInterface() {
       .upsert({
         submission_id: submissionId,
         question_id: qId,
+        question_number: qNum,
         student_answer: data.student_answer || null,
+        answer_status: 'answered',
         updated_at: new Date().toISOString()
       }, { onConflict: 'submission_id,question_id' });
 
     if (error) {
       console.error('CRITICAL: Answer failed to save to Supabase:', error);
-      // Optional: Add a toast or UI notification here if needed
     }
   };
 
   // Debounce helper for text answers
   const timeoutRef = useRef<any>(null);
-  const handleTextChange = (qId: string, text: string) => {
+  const handleTextChange = (qId: string, qNum: number, text: string) => {
     setAnswers(prev => ({
       ...prev,
-      [qId]: { ...prev[qId], student_answer: text }
+      [qId]: { ...prev[qId], student_answer: text, status: 'answered' }
     }));
 
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
-      saveAnswer(qId, { student_answer: text });
+      saveAnswer(qId, qNum, { student_answer: text });
     }, 1000);
   };
 
@@ -229,7 +230,9 @@ export default function AssignmentInterface() {
         answerUpdates.push({
           submission_id: submissionId,
           question_id: q.id,
+          question_number: q.question_number,
           student_answer: studentAnswerText || null,
+          answer_status: studentAnswerText.trim() ? 'answered' : 'skipped',
           is_correct: isCorrect,
           updated_at: new Date().toISOString()
         });
@@ -455,6 +458,7 @@ export default function AssignmentInterface() {
                   key={opt.option_id}
                   onClick={() => saveAnswer(
                     currentQ.id,
+                    currentQ.question_number,
                     { student_answer: opt.option_id }
                   )}
                   className={`w-full p-4 rounded-card border-2 text-left transition-all flex items-center justify-between group ${
@@ -481,7 +485,7 @@ export default function AssignmentInterface() {
               <textarea
                 placeholder="Type your answer..."
                 value={currentAns.student_answer || ''}
-                onChange={(e) => handleTextChange(currentQ.id, e.target.value)}
+                onChange={(e) => handleTextChange(currentQ.id, currentQ.question_number, e.target.value)}
                 className="w-full h-40 p-4 bg-white border-2 border-gray-100 rounded-card focus:outline-none focus:border-primary transition-all resize-none font-medium"
               />
             </div>
