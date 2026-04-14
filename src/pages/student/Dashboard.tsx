@@ -70,7 +70,7 @@ export default function Dashboard() {
     setLoading(false);
   };
 
-  // 🌌 Antesia - Developed by Madhur Mishra (github: madhurmishracss)
+  // 🌌 Antesia - Developed by Madhur Mishra (github: MadhurMishraX)
 
   useEffect(() => {
     if (!profile) return;

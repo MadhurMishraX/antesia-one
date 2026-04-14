@@ -1,7 +1,7 @@
 # 🌌 ANTESIA: Advanced Gamified Learning Management System
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/madhurmishracss/antesia)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/madhurmishracss/antesia/blob/main/LICENSE)
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/MadhurMishraX/antesia)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/MadhurMishraX/antesia/blob/main/LICENSE)
 [![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Backend-Supabase-green.svg)](https://supabase.com/)

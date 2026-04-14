@@ -14,7 +14,7 @@ interface Answer {
   student_answer?: string;
 }
 
-// 🌌 Antesia - Developed by Madhur Mishra (github: madhurmishracss)
+// 🌌 Antesia - Developed by Madhur Mishra (github: MadhurMishraX)
 
 export default function AssignmentInterface() {
   const { id } = useParams();
