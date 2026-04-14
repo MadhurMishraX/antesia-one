@@ -146,7 +146,7 @@ export default function AssignmentInterface() {
       .upsert({
         submission_id: submissionId,
         question_id: qId,
-        question_number: qNum,
+        question_number: qNum || 0, // Fallback to 0 if null to satisfy constraint
         student_answer: data.student_answer || null,
         answer_status: 'answered',
         updated_at: new Date().toISOString()
@@ -205,7 +205,7 @@ export default function AssignmentInterface() {
       const totalQuestions = questionsData?.length || 0;
       const answerUpdates: any[] = [];
 
-      questionsData?.forEach(q => {
+      questionsData?.forEach((q, index) => {
         const studentAnswerText = savedAnswerMap[q.id] || '';
         let isCorrect: boolean | null = false;
         const type = String(q.question_type).toUpperCase();
@@ -230,7 +230,7 @@ export default function AssignmentInterface() {
         answerUpdates.push({
           submission_id: submissionId,
           question_id: q.id,
-          question_number: q.question_number,
+          question_number: q.question_number || (index + 1), // Fallback to index if null
           student_answer: studentAnswerText || null,
           answer_status: studentAnswerText.trim() ? 'answered' : 'skipped',
           is_correct: isCorrect,
