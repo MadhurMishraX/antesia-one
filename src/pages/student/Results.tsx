@@ -58,6 +58,8 @@ export default function Results() {
   const pendingCount = questions.filter(q => q.studentAns?.is_correct === null && q.studentAns?.student_answer).length;
   const skippedCount = questions.filter(q => !q.studentAns?.student_answer).length;
 
+  // 🌌 Antesia - Developed by Madhur Mishra (github: madhurmishracss)
+
   const renderTextWithMath = (text: string) => {
     if (!text) return null;
     const parts = text.split(/(\$.*?\$)/g);

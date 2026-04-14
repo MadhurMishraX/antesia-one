@@ -35,6 +35,8 @@ import ModuleSubmissions from './pages/teacher/ModuleSubmissions';
 import AdminPanel from './pages/AdminPanel';
 import AdminLogin from './pages/AdminLogin';
 
+// 🌌 Antesia - Developed by Madhur Mishra (github: madhurmishracss)
+
 function AppRoutes() {
   const { user, profile, loading } = useAuth();
   const location = useLocation();

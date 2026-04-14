@@ -10,6 +10,8 @@ if (!supabaseUrl || !supabaseAnonKey) {
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
+// 🌌 Antesia - Developed by Madhur Mishra (github: madhurmishracss)
+
 export type UserRole = 'teacher' | 'student' | 'admin';
 
 export interface Profile {

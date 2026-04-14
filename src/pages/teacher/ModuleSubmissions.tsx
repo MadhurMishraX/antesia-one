@@ -60,6 +60,8 @@ export default function ModuleSubmissions() {
     fetchData();
   }, [id]);
 
+  // 🌌 Antesia - Developed by Madhur Mishra (github: madhurmishracss)
+
   const handleApprove = async (answerId: string, isCorrect: boolean) => {
     setApproving(true);
     try {

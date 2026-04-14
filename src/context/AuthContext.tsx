@@ -71,6 +71,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
+// 🌌 Antesia - Developed by Madhur Mishra (github: madhurmishracss)
+
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
