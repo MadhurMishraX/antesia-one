@@ -28,7 +28,7 @@ import {
 } from 'lucide-react';
 
 // --- Types ---
-type AdminSection = 'overview' | 'users' | 'modules' | 'submissions' | 'doubts' | 'broadcasts' | 'notifications' | 'storage';
+type AdminSection = 'overview' | 'users' | 'activity' | 'modules' | 'submissions' | 'doubts' | 'broadcasts' | 'notifications' | 'storage';
 
 interface Stats {
   totalUsers: number;
@@ -335,6 +335,12 @@ export default function AdminPanel() {
             if (filters.role) query = query.eq('role', filters.role);
             if (search) query = query.or(`full_name.ilike.%${search}%,login_id.ilike.%${search}%`);
             break;
+          case 'activity':
+            query = supabase.from('profiles').select('id, full_name, role, last_seen_at, last_location', { count: 'exact' });
+            if (filters.role) query = query.eq('role', filters.role);
+            if (search) query = query.or(`full_name.ilike.%${search}%`);
+            orderField = 'last_seen_at';
+            break;
           case 'modules':
             query = supabase.from('modules').select('*, profiles(full_name)', { count: 'exact' });
             if (filters.subject) query = query.eq('subject', filters.subject);
@@ -632,6 +638,100 @@ export default function AdminPanel() {
       <Pagination page={page} totalPages={Math.ceil(totalCount / pageSize)} onPageChange={setPage} />
     </div>
   );
+
+  const renderActivity = () => {
+    const getStatusInfo = (lastSeen: string | null) => {
+      if (!lastSeen) return { label: 'Offline', color: 'bg-slate-400', pulse: false };
+      const diff = Date.now() - new Date(lastSeen).getTime();
+      const mins = diff / 1000 / 60;
+
+      if (mins < 5) return { label: 'Online', color: 'bg-success', pulse: true };
+      if (mins < 15) return { label: 'Idle', color: 'bg-warning', pulse: false };
+      return { label: 'Offline', color: 'bg-slate-400', pulse: false };
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-wrap gap-4">
+          <div className="flex-1 min-w-[300px] relative">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
+            <input 
+              type="text" 
+              placeholder="Search active users..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-white border border-gray-100 rounded-xl focus:outline-none focus:border-primary transition-all shadow-sm"
+            />
+          </div>
+          <select 
+            value={filters.role || ''}
+            onChange={(e) => setFilters({ ...filters, role: e.target.value || undefined })}
+            className="px-4 py-3 bg-white border border-gray-100 rounded-xl focus:outline-none focus:border-primary transition-all shadow-sm font-bold text-sm"
+          >
+            <option value="">All Roles</option>
+            <option value="student">Student</option>
+            <option value="teacher">Teacher</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <div className="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-gray-50/50 border-b border-gray-100">
+                <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">User</th>
+                <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</th>
+                <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Current Page</th>
+                <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Last Seen</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {data.map((u) => {
+                const status = getStatusInfo(u.last_seen_at);
+                return (
+                  <tr key={u.id} className="hover:bg-gray-50/50 transition-colors">
+                    <td className="p-6">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-sm text-slate-900">{u.full_name}</span>
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{u.role}</span>
+                      </div>
+                    </td>
+                    <td className="p-6">
+                      <div className="flex items-center gap-2">
+                        <div className="relative flex items-center justify-center">
+                          {status.pulse && (
+                            <span className={`absolute inline-flex h-3 w-3 rounded-full ${status.color} opacity-75 animate-ping`} />
+                          )}
+                          <div className={`h-2.5 w-2.5 rounded-full ${status.color} relative z-10`} />
+                        </div>
+                        <span className="text-sm font-bold text-slate-700">{status.label}</span>
+                      </div>
+                    </td>
+                    <td className="p-6">
+                      {status.label === 'Offline' ? (
+                        <span className="text-xs text-slate-400 italic">Inactive</span>
+                      ) : (
+                        <span className="text-sm font-medium text-primary bg-primary/5 px-3 py-1 rounded-lg">
+                          {u.last_location || 'Dashboard'}
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-6 text-xs text-slate-500">
+                      {u.last_seen_at ? new Date(u.last_seen_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Never'}
+                      <div className="text-[9px] font-medium text-slate-400 mt-1">
+                        {u.last_seen_at && new Date(u.last_seen_at).toLocaleDateString()}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <Pagination page={page} totalPages={Math.ceil(totalCount / pageSize)} onPageChange={setPage} />
+      </div>
+    );
+  };
 
   const renderModules = () => (
     <div className="space-y-6">
@@ -1057,6 +1157,7 @@ export default function AdminPanel() {
           <NavItem active={activeSection === 'overview'} onClick={() => setActiveSection('overview')} icon={<LayoutDashboard size={20} />} label="Overview" />
           <div className="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Management</div>
           <NavItem active={activeSection === 'users'} onClick={() => setActiveSection('users')} icon={<Users size={20} />} label="Users" />
+          <NavItem active={activeSection === 'activity'} onClick={() => setActiveSection('activity')} icon={<RefreshCw size={20} />} label="Activity" />
           <NavItem active={activeSection === 'modules'} onClick={() => setActiveSection('modules')} icon={<ClipboardList size={20} />} label="Modules" />
           <NavItem active={activeSection === 'submissions'} onClick={() => setActiveSection('submissions')} icon={<CheckSquare size={20} />} label="Submissions" />
           <NavItem active={activeSection === 'doubts'} onClick={() => setActiveSection('doubts')} icon={<MessageSquare size={20} />} label="Doubts" />
@@ -1132,6 +1233,7 @@ export default function AdminPanel() {
                   />
                   {activeSection === 'overview' && renderOverview()}
                   {activeSection === 'users' && renderUsers()}
+                  {activeSection === 'activity' && renderActivity()}
                   {activeSection === 'modules' && renderModules()}
                   {activeSection === 'submissions' && renderSubmissions()}
                   {activeSection === 'doubts' && renderDoubts()}

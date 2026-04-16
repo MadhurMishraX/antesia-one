@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { supabase, Profile, getProfile } from '../lib/supabase';
 import { User } from '@supabase/supabase-js';
 
@@ -10,6 +10,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
   toggleDarkMode: (enabled: boolean) => void;
+  updateActivity: (location: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -30,6 +31,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const toggleDarkMode = (enabled: boolean) => {
     setIsDarkMode(enabled);
   };
+
+  const updateActivity = useCallback(async (location: string) => {
+    if (!user) return;
+    try {
+      await supabase
+        .from('profiles')
+        .update({
+          last_seen_at: new Date().toISOString(),
+          last_location: location
+        })
+        .eq('id', user.id);
+    } catch (error) {
+      console.error('Error updating activity:', error);
+    }
+  }, [user]);
 
   const refreshProfile = async () => {
     if (user) {
@@ -74,7 +90,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isDarkMode,
       signOut,
       refreshProfile,
-      toggleDarkMode
+      toggleDarkMode,
+      updateActivity
     }}>
       {children}
     </AuthContext.Provider>

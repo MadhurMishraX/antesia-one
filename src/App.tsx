@@ -39,8 +39,40 @@ import AdminLogin from './pages/AdminLogin';
 // 🌌 Antesia - Developed by Madhur Mishra (github: MadhurMishraX)
 
 function AppRoutes() {
-  const { user, profile, loading, isDarkMode } = useAuth();
+  const { user, profile, loading, isDarkMode, updateActivity } = useAuth();
   const location = useLocation();
+
+  useEffect(() => {
+    if (user) {
+      // Map path to friendly names
+      const pathMap: Record<string, string> = {
+        '/': 'Dashboard',
+        '/learn': 'Study Vault',
+        '/ranks': 'Leaderboard',
+        '/profile': 'Profile Settings',
+        '/doubts': 'Doubt Section',
+        '/teacher': 'Command Center',
+        '/teacher/auditor': 'Auditor',
+        '/teacher/class': 'Class Management',
+        '/teacher/analytics': 'Analytics',
+        '/teacher/doubts': 'Teacher Doubts',
+        '/admin': 'Admin Control Panel'
+      };
+
+      const locationName = Object.keys(pathMap).find(path => location.pathname === path) 
+        ? pathMap[location.pathname] 
+        : location.pathname.split('/')[1] || 'Dashboard';
+
+      updateActivity(locationName);
+
+      // Add a periodic heartbeat every 2 minutes for those staying on one page
+      const interval = setInterval(() => {
+        updateActivity(locationName);
+      }, 120000); // 2 minutes
+
+      return () => clearInterval(interval);
+    }
+  }, [location.pathname, user, updateActivity]);
 
   useEffect(() => {
     if (isDarkMode) {
