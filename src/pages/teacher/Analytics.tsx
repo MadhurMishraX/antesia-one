@@ -162,7 +162,7 @@ export default function Analytics() {
   if (loading) return null;
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8 transition-colors duration-300">
       <TopBar 
         title="Analytics"
         subtitle="Performance Insights"
@@ -207,18 +207,18 @@ export default function Analytics() {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="bg-white rounded-[32px] shadow-sm border border-gray-100 p-8 relative overflow-hidden"
+            className="bg-surface rounded-[32px] shadow-sm border border-surface/10 p-8 relative overflow-hidden"
           >
-            <button onClick={() => setExpandedMetric(null)} className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-gray-50 text-text-muted">
+            <button onClick={() => setExpandedMetric(null)} className="absolute top-6 right-6 w-8 h-8 flex items-center justify-center rounded-full bg-background text-text-muted">
               <X size={18} />
             </button>
             <h3 className="font-bold text-sm uppercase tracking-widest text-text-muted mb-6">Student Breakdown</h3>
             <div className="space-y-3 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
               {summary?.perStudent?.avgScore?.map((s: any, i: number) => (
-                <div key={i} className="flex items-center justify-between p-4 bg-gray-50 rounded-[16px] border border-transparent hover:border-primary/10 transition-all">
+                <div key={i} className="flex items-center justify-between p-4 bg-background rounded-[16px] border border-transparent hover:border-primary/10 transition-all">
                   <span className="text-sm font-bold text-text-primary">{s.student_name}</span>
                   <div className="flex items-center gap-3">
-                    <div className="w-24 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-24 h-1.5 bg-surface rounded-full overflow-hidden">
                       <div className="h-full bg-primary" style={{ width: `${s.value_percent}%` }} />
                     </div>
                     <span className="text-sm font-bold text-primary tabular-nums">{s.value_percent}%</span>
@@ -247,7 +247,7 @@ export default function Analytics() {
                 className={`px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all border ${
                   leaderboardSortBy === type 
                     ? 'bg-primary text-white border-primary shadow-md shadow-primary/20' 
-                    : 'bg-white text-text-muted border-gray-100 hover:border-primary/30'
+                    : 'bg-surface text-text-muted border-surface/10 hover:border-primary/30'
                 }`}
               >
                 {type}
@@ -275,12 +275,12 @@ export default function Analytics() {
               >
                 <div className="relative cursor-pointer group">
                   <div className={`rounded-full overflow-hidden border-4 shadow-lg transition-transform group-hover:scale-110 ${
-                    isFirst ? 'w-20 h-20 border-warning' : 'w-16 h-16 border-white'
+                    isFirst ? 'w-20 h-20 border-warning' : 'w-16 h-16 border-surface'
                   }`}>
                     {s.photo ? (
                       <img src={s.photo} alt="PFP" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gray-100 text-text-muted font-bold text-xl">
+                      <div className="w-full h-full flex items-center justify-center bg-background text-text-muted font-bold text-xl">
                         {s.name[0]}
                       </div>
                     )}
@@ -297,7 +297,7 @@ export default function Analytics() {
                   </div>
                 </div>
                 <div className="text-center">
-                  <p className={`font-bold text-xs truncate max-w-[80px] ${isFirst ? 'text-sm' : ''}`}>
+                  <p className={`font-bold text-xs truncate max-w-[80px] text-text-primary ${isFirst ? 'text-sm' : ''}`}>
                     {s.name.split(' ')[0]}
                   </p>
                   <p className="text-[10px] text-text-muted font-bold">
@@ -305,7 +305,7 @@ export default function Analytics() {
                   </p>
                 </div>
                 <div className={`w-full rounded-t-2xl shadow-inner ${
-                  isFirst ? 'h-20 bg-warning/20' : isSecond ? 'h-14 bg-gray-100' : 'h-10 bg-amber-700/10'
+                  isFirst ? 'h-20 bg-warning/20' : isSecond ? 'h-14 bg-surface' : 'h-10 bg-amber-700/10'
                 }`} />
               </motion.div>
             );
@@ -318,14 +318,14 @@ export default function Analytics() {
             const isTop3 = i < 3;
             const rankColor = i === 0 ? 'bg-warning/10 border-warning/30' : 
                               i === 1 ? 'bg-slate-200/50 border-slate-300/30' : 
-                              i === 2 ? 'bg-amber-700/10 border-amber-700/30' : 'bg-white border-gray-100';
+                              i === 2 ? 'bg-amber-700/10 border-amber-700/30' : 'bg-surface border-surface/10';
             
             return (
               <button 
                 key={s.id} 
                 onClick={() => setSelectedStudent(s)}
                 className={`w-full p-4 rounded-card shadow-sm border flex items-center gap-4 transition-all hover:scale-[1.02] text-left ${
-                  isTop3 ? `${rankColor} border-l-4` : 'bg-white border-gray-100'
+                  isTop3 ? `${rankColor} border-l-4` : 'bg-surface border-surface/10'
                 }`}
               >
                 <span className={`w-6 text-sm font-bold ${
@@ -333,7 +333,7 @@ export default function Analytics() {
                   i === 1 ? 'text-slate-500' : 
                   i === 2 ? 'text-amber-800' : 'text-text-muted'
                 }`}>{i + 1}</span>
-                <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden">
+                <div className="w-10 h-10 rounded-full bg-background overflow-hidden">
                   {s.photo ? (
                     <img src={s.photo} alt="PFP" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   ) : (
@@ -343,7 +343,7 @@ export default function Analytics() {
                   )}
                 </div>
                 <div className="flex-1">
-                  <p className="font-bold text-sm">{s.name}</p>
+                  <p className="font-bold text-sm text-text-primary">{s.name}</p>
                   <div className="flex items-center gap-3 mt-1">
                     <div className="flex items-center gap-1 text-[10px] font-bold text-text-muted uppercase tracking-wider">
                       <Target size={10} /> {s.accuracy.toFixed(1)}%
@@ -361,7 +361,7 @@ export default function Analytics() {
                     {leaderboardSortBy === 'xp' ? s.league : leaderboardSortBy === 'score' ? 'Avg Score' : 'Accuracy'}
                   </p>
                 </div>
-                <ChevronRight size={16} className="text-gray-300" />
+                <ChevronRight size={16} className="text-text-muted" />
               </button>
             );
           })}
@@ -383,7 +383,7 @@ export default function Analytics() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-2xl bg-white rounded-[40px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+              className="relative w-full max-w-2xl bg-surface rounded-[40px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
               {/* Header */}
               <div className="p-8 bg-primary text-white relative">
@@ -411,20 +411,20 @@ export default function Analytics() {
               </div>
 
               {/* Stats Grid */}
-              <div className="p-8 grid grid-cols-3 gap-4 bg-gray-50/50 border-b border-gray-100">
-                <div className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm text-center">
+              <div className="p-8 grid grid-cols-3 gap-4 bg-background border-b border-surface/10">
+                <div className="bg-surface p-4 rounded-3xl border border-surface/10 shadow-sm text-center">
                   <Target size={20} className="mx-auto mb-2 text-primary" />
                   <p className="text-xl font-bold text-text-primary">{selectedStudent.accuracy.toFixed(2)}%</p>
                   <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Accuracy</p>
                 </div>
-                <div className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm text-center">
+                <div className="bg-surface p-4 rounded-3xl border border-surface/10 shadow-sm text-center">
                   <Clock size={20} className="mx-auto mb-2 text-warning" />
                   <p className="text-xl font-bold text-text-primary">
                     {Math.floor(selectedStudent.avgTime / 60)}:{(selectedStudent.avgTime % 60).toFixed(2).padStart(5, '0')}
                   </p>
                   <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Avg Time</p>
                 </div>
-                <div className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm text-center">
+                <div className="bg-surface p-4 rounded-3xl border border-surface/10 shadow-sm text-center">
                   <Award size={20} className="mx-auto mb-2 text-success" />
                   <p className="text-xl font-bold text-text-primary">{selectedStudent.avgScore.toFixed(2)}%</p>
                   <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Avg Score</p>
@@ -448,7 +448,7 @@ export default function Analytics() {
                           className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
                             studentWorkModule === m.id 
                               ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' 
-                              : 'bg-white text-text-muted border-gray-200 hover:border-primary/30'
+                              : 'bg-surface text-text-muted border-surface/10 hover:border-primary/30'
                           }`}
                         >
                           {m.module_name}
@@ -483,7 +483,7 @@ export default function Analytics() {
 
                       <div className="space-y-4">
                         {(studentWork.answers || []).map((ans: any, i: number) => (
-                          <div key={ans.id} className="p-5 bg-white rounded-3xl border border-gray-100 shadow-sm space-y-3">
+                          <div key={ans.id} className="p-5 bg-surface rounded-3xl border border-surface/10 shadow-sm space-y-3">
                             <div className="flex items-start justify-between gap-4">
                               <div className="flex-1">
                                 <p className="text-xs font-bold text-text-muted uppercase tracking-widest mb-1">Question {ans.question_number}</p>
@@ -495,7 +495,7 @@ export default function Analytics() {
                                 {ans.is_correct ? 'Correct' : 'Incorrect'}
                               </div>
                             </div>
-                            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                            <div className="p-3 bg-background rounded-xl border border-surface/10">
                               <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">Student's Answer</p>
                               <p className="text-sm font-bold text-text-primary">
                                 {ans.questions.question_type === 'MCQ' 
@@ -523,7 +523,7 @@ export default function Analytics() {
                       <p className="text-sm font-bold uppercase tracking-widest">Loading Work...</p>
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-12 text-text-muted border-2 border-dashed border-gray-100 rounded-[40px]">
+                    <div className="flex flex-col items-center justify-center py-12 text-text-muted border-2 border-dashed border-surface/10 rounded-[40px]">
                       <Activity size={48} className="mb-4 opacity-20" />
                       <p className="text-sm font-bold uppercase tracking-widest">Select a module to view details</p>
                     </div>
@@ -540,16 +540,16 @@ export default function Analytics() {
 
 function MetricCard({ icon, value, label, onClick, color }: any) {
   const colorMap: any = {
-    primary: 'bg-primary/5 text-primary',
-    warning: 'bg-warning/5 text-warning',
-    danger: 'bg-danger/5 text-danger',
-    success: 'bg-success/5 text-success'
+    primary: 'bg-primary/10 text-primary',
+    warning: 'bg-warning/10 text-warning',
+    danger: 'bg-danger/10 text-danger',
+    success: 'bg-success/10 text-success'
   };
 
   return (
     <button 
       onClick={onClick}
-      className="bg-white p-6 rounded-[28px] shadow-sm border border-gray-100 text-left space-y-4 hover:border-primary/30 transition-all active:scale-95 group"
+      className="bg-surface p-6 rounded-[28px] shadow-sm border border-surface/10 text-left space-y-4 hover:border-primary/30 transition-all active:scale-95 group"
     >
       <div className={`w-12 h-12 rounded-[14px] flex items-center justify-center transition-transform group-hover:scale-110 ${colorMap[color]}`}>
         {icon}
@@ -564,7 +564,7 @@ function MetricCard({ icon, value, label, onClick, color }: any) {
 
 function ChartCard({ title, data, dataKey }: any) {
   return (
-    <div className="bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 space-y-8">
+    <div className="bg-surface p-8 rounded-[32px] shadow-sm border border-surface/10 space-y-8">
       <div className="flex items-center justify-between">
         <h3 className="font-bold text-sm uppercase tracking-widest text-text-muted">{title}</h3>
         <div className="flex items-center gap-2">
@@ -575,29 +575,32 @@ function ChartCard({ title, data, dataKey }: any) {
       <div className="h-64 w-full">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F1F5F9" />
+            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(var(--text-muted), 0.1)" />
             <XAxis 
               dataKey="module_name" 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fontSize: 10, fill: '#64748B', fontWeight: 600 }}
+              tick={{ fontSize: 10, fill: 'var(--text-muted)', fontWeight: 600 }}
               interval={0}
             />
             <YAxis 
               axisLine={false} 
               tickLine={false} 
-              tick={{ fontSize: 10, fill: '#64748B', fontWeight: 600 }}
+              tick={{ fontSize: 10, fill: 'var(--text-muted)', fontWeight: 600 }}
             />
             <Tooltip 
-              cursor={{ fill: '#F8FAFC', radius: 8 }}
+              cursor={{ fill: 'rgba(var(--primary), 0.05)', radius: 8 }}
               contentStyle={{ 
                 borderRadius: '16px', 
                 border: 'none', 
+                backgroundColor: 'var(--surface)',
                 boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)',
-                padding: '12px'
+                padding: '12px',
+                color: 'var(--text-primary)'
               }}
+              itemStyle={{ color: 'var(--text-primary)' }}
             />
-            <Bar dataKey={dataKey} fill="#4F46E5" radius={[6, 6, 0, 0]} barSize={32} />
+            <Bar dataKey={dataKey} fill="var(--primary)" radius={[6, 6, 0, 0]} barSize={32} />
           </BarChart>
         </ResponsiveContainer>
       </div>

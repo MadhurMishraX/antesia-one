@@ -63,7 +63,7 @@ export default function TopBar({ title, subtitle, showNotifications = true }: To
   return (
     <div className="flex items-center justify-between mb-8">
       <div>
-        {title && <h1 className="text-2xl font-bold tracking-tight">{title}</h1>}
+        {title && <h1 className="text-2xl font-bold tracking-tight text-text-primary">{title}</h1>}
         {subtitle && <p className="text-xs font-bold text-text-muted uppercase tracking-widest mt-1">{subtitle}</p>}
       </div>
 
@@ -85,9 +85,9 @@ export default function TopBar({ title, subtitle, showNotifications = true }: To
         <div className="relative" ref={dropdownRef}>
           <button 
             onClick={() => setIsOpen(!isOpen)}
-            className="flex items-center gap-2 p-1 rounded-full hover:bg-gray-100 transition-all active:scale-95"
+            className="flex items-center gap-2 p-1 rounded-full hover:bg-surface/50 transition-all active:scale-95"
           >
-            <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden border-2 border-white shadow-sm">
+            <div className="w-10 h-10 rounded-full bg-surface overflow-hidden border-2 border-surface shadow-sm">
               {profile?.profile_photo_url ? (
                 <img 
                   src={profile.profile_photo_url} 
@@ -109,10 +109,10 @@ export default function TopBar({ title, subtitle, showNotifications = true }: To
               <motion.div 
                 initial={{ opacity: 0, y: 10, scale: 0.95 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-2xl border border-gray-100 py-2 z-50 overflow-hidden"
+                 exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                className="absolute right-0 mt-2 w-48 bg-surface rounded-2xl shadow-2xl border border-surface/10 py-2 z-50 overflow-hidden"
               >
-                <div className="px-4 py-2 border-b border-gray-50">
+                <div className="px-4 py-2 border-b border-surface/5">
                   <p className="text-xs font-bold text-text-primary truncate">{profile?.full_name}</p>
                   <p className="text-[10px] text-text-muted truncate">{profile?.login_id}</p>
                 </div>
@@ -120,7 +120,7 @@ export default function TopBar({ title, subtitle, showNotifications = true }: To
                 <Link 
                   to="/profile" 
                   onClick={() => setIsOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-primary hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 text-sm font-medium text-text-primary hover:bg-surface/50 transition-colors"
                 >
                   <User size={18} className="text-primary" />
                   My Profile

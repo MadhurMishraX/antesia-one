@@ -82,20 +82,20 @@ export default function Doubts() {
   };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8 transition-colors duration-300">
       <TopBar 
         title="Doubts"
         subtitle="Student Queries"
       />
 
       {/* Filter Bar */}
-      <div className="flex bg-white p-1.5 rounded-full shadow-sm border border-gray-100 w-fit">
+      <div className="flex bg-surface p-1.5 rounded-full shadow-sm border border-surface/10 w-fit">
         {(['all', 'open', 'resolved'] as const).map((f) => (
           <button
             key={f}
             onClick={() => setFilter(f)}
             className={`px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${
-              filter === f ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-text-muted hover:bg-gray-50'
+              filter === f ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-text-muted hover:bg-background'
             }`}
           >
             {f}
@@ -114,11 +114,11 @@ export default function Doubts() {
             <motion.div 
               key={doubt.id}
               layout
-              className="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden group"
+              className="bg-surface rounded-[32px] shadow-sm border border-surface/10 overflow-hidden group"
             >
               <div 
                 onClick={() => setExpandedId(expandedId === doubt.id ? null : doubt.id)}
-                className="p-6 space-y-4 cursor-pointer active:bg-gray-50 transition-colors"
+                className="p-6 space-y-4 cursor-pointer active:bg-background transition-colors"
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -160,10 +160,10 @@ export default function Doubts() {
                     initial={{ height: 0, opacity: 0 }}
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
-                    className="border-t border-gray-50 p-6 space-y-8"
+                    className="border-t border-surface/5 p-6 space-y-8"
                   >
                     <div className="space-y-6">
-                      <div className="bg-gray-50 p-5 rounded-[24px] border border-gray-100">
+                      <div className="bg-background p-5 rounded-[24px] border border-surface/10">
                         <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-3">Context</p>
                         <p className="text-xs font-medium text-text-muted whitespace-pre-wrap leading-relaxed">{doubt.pre_filled_context}</p>
                       </div>
@@ -174,7 +174,7 @@ export default function Doubts() {
                       </div>
 
                       {doubt.attachment_url && (
-                        <div className="rounded-[24px] overflow-hidden border border-gray-100 max-w-sm shadow-sm">
+                        <div className="rounded-[24px] overflow-hidden border border-surface/10 max-w-sm shadow-sm">
                           <img src={doubt.attachment_url} alt="Attachment" className="w-full h-auto" referrerPolicy="no-referrer" />
                         </div>
                       )}
@@ -196,13 +196,13 @@ export default function Doubts() {
                     </div>
 
                     {/* Reply Input */}
-                    <div className="space-y-4 pt-6 border-t border-gray-50">
+                    <div className="space-y-4 pt-6 border-t border-surface/5">
                       <div className="relative">
                         <textarea 
                           placeholder="Type your response here..."
                           value={replyText}
                           onChange={(e) => setReplyText(e.target.value)}
-                          className="w-full h-32 p-5 bg-gray-50 border border-transparent rounded-[24px] focus:bg-white focus:border-primary/20 focus:outline-none transition-all text-sm font-medium resize-none"
+                          className="w-full h-32 p-5 bg-background border border-transparent rounded-[24px] focus:bg-surface focus:border-primary/20 focus:outline-none transition-all text-sm font-medium resize-none text-text-primary"
                         />
                         <div className="absolute bottom-4 right-4 flex items-center gap-2">
                           {/* Attachments coming soon */}
@@ -236,7 +236,7 @@ export default function Doubts() {
           ))
         ) : (
           <div className="py-20 text-center space-y-4">
-            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-text-muted">
+            <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto text-text-muted">
               <MessageSquare size={32} />
             </div>
             <div>

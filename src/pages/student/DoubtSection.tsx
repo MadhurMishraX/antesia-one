@@ -73,14 +73,14 @@ export default function DoubtSection() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-24 transition-colors duration-300">
       {/* Top Bar */}
-      <div className="p-6 flex items-center justify-between bg-white shadow-sm sticky top-0 z-30">
+      <div className="p-6 flex items-center justify-between bg-surface shadow-sm sticky top-0 z-30 border-b border-surface/10">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-text-muted hover:text-primary transition-colors">
             <ArrowLeft size={24} />
           </button>
-          <h2 className="text-lg font-bold">Doubt Section</h2>
+          <h2 className="text-lg font-bold text-text-primary">Doubt Section</h2>
         </div>
         <button 
           onClick={() => navigate('/doubt/post')}
@@ -92,13 +92,13 @@ export default function DoubtSection() {
 
       <div className="p-6 space-y-8">
         {/* Filter Bar */}
-        <div className="flex bg-white p-1.5 rounded-full shadow-sm border border-gray-100 w-fit">
+        <div className="flex bg-surface p-1.5 rounded-full shadow-sm border border-surface/10 w-fit">
           {(['all', 'open', 'resolved'] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
               className={`px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest transition-all ${
-                filter === f ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-text-muted hover:bg-gray-50'
+                filter === f ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-text-muted hover:bg-surface/50'
               }`}
             >
               {f}
@@ -117,15 +117,15 @@ export default function DoubtSection() {
               <motion.div 
                 key={doubt.id}
                 layout
-                className="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden group"
+                className="bg-surface rounded-[32px] shadow-sm border border-surface/10 overflow-hidden group"
               >
                 <div 
                   onClick={() => setExpandedId(expandedId === doubt.id ? null : doubt.id)}
-                  className="p-6 space-y-4 cursor-pointer active:bg-gray-50 transition-colors"
+                  className="p-6 space-y-4 cursor-pointer active:bg-surface/50 transition-colors"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/5 flex items-center justify-center text-primary font-bold">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
                         {doubt.profiles?.full_name[0]}
                       </div>
                       <div>
@@ -166,10 +166,10 @@ export default function DoubtSection() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-gray-50 p-6 space-y-8"
+                      className="border-t border-surface/10 p-6 space-y-8"
                     >
                       <div className="space-y-6">
-                        <div className="bg-gray-50 p-5 rounded-[24px] border border-gray-100">
+                        <div className="bg-background p-5 rounded-[24px] border border-surface/10">
                           <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-3">Context</p>
                           <p className="text-xs font-medium text-text-muted whitespace-pre-wrap leading-relaxed">{doubt.pre_filled_context}</p>
                         </div>
@@ -180,7 +180,7 @@ export default function DoubtSection() {
                         </div>
 
                         {doubt.attachment_url && (
-                          <div className="rounded-[24px] overflow-hidden border border-gray-100 max-w-sm shadow-sm">
+                          <div className="rounded-[24px] overflow-hidden border border-surface/10 max-w-sm shadow-sm">
                             <img src={doubt.attachment_url} alt="Attachment" className="w-full h-auto" referrerPolicy="no-referrer" />
                           </div>
                         )}
@@ -202,13 +202,13 @@ export default function DoubtSection() {
                       </div>
 
                       {/* Reply Input */}
-                      <div className="space-y-4 pt-6 border-t border-gray-50">
+                      <div className="space-y-4 pt-6 border-t border-surface/10">
                         <div className="relative">
                           <textarea 
                             placeholder="Type your response here..."
                             value={replyText}
                             onChange={(e) => setReplyText(e.target.value)}
-                            className="w-full h-32 p-5 bg-gray-50 border border-transparent rounded-[24px] focus:bg-white focus:border-primary/20 focus:outline-none transition-all text-sm font-medium resize-none"
+                            className="w-full h-32 p-5 bg-background border border-surface/10 rounded-[24px] focus:bg-surface focus:border-primary/20 focus:outline-none transition-all text-sm font-medium resize-none text-text-primary"
                           />
                         </div>
                         
@@ -230,7 +230,7 @@ export default function DoubtSection() {
             ))
           ) : (
             <div className="py-20 text-center space-y-4">
-              <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-text-muted">
+              <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto text-text-muted">
                 <MessageSquare size={32} />
               </div>
               <div>

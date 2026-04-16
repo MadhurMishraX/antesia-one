@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
@@ -38,8 +39,16 @@ import AdminLogin from './pages/AdminLogin';
 // 🌌 Antesia - Developed by Madhur Mishra (github: MadhurMishraX)
 
 function AppRoutes() {
-  const { user, profile, loading } = useAuth();
+  const { user, profile, loading, isDarkMode } = useAuth();
   const location = useLocation();
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, [isDarkMode]);
 
   if (loading) {
     return (

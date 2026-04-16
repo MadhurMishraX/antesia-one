@@ -375,9 +375,9 @@ export default function AssignmentInterface() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col transition-colors duration-300">
       {/* Top Bar */}
-      <div className="p-4 bg-white shadow-sm flex items-center justify-between sticky top-0 z-30">
+      <div className="p-4 bg-surface shadow-sm flex items-center justify-between sticky top-0 z-30 border-b border-surface/10">
         <button onClick={() => setShowDrawer(true)} className="p-2 text-text-muted hover:text-primary transition-colors">
           <Menu size={24} />
         </button>
@@ -398,10 +398,10 @@ export default function AssignmentInterface() {
             />
             <motion.div 
               initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
-              className="fixed top-0 left-0 bottom-0 w-72 bg-white z-50 p-6 flex flex-col"
+              className="fixed top-0 left-0 bottom-0 w-72 bg-surface z-50 p-6 flex flex-col border-r border-surface/10"
             >
               <div className="flex items-center justify-between mb-8">
-                <h3 className="text-xl font-bold">Questions</h3>
+                <h3 className="text-xl font-bold text-text-primary">Questions</h3>
                 <button onClick={() => setShowDrawer(false)} className="p-2 text-text-muted">
                   <X size={24} />
                 </button>
@@ -413,7 +413,7 @@ export default function AssignmentInterface() {
                   const colors: any = {
                     answered: 'bg-success text-white',
                     skipped: 'bg-danger text-white',
-                    not_visited: 'bg-gray-100 text-text-muted'
+                    not_visited: 'bg-background text-text-muted'
                   };
                   return (
                     <button
@@ -429,7 +429,7 @@ export default function AssignmentInterface() {
                 })}
               </div>
 
-              <div className="pt-6 border-t border-gray-100 mt-auto">
+              <div className="pt-6 border-t border-surface/10 mt-auto">
                 <button 
                   onClick={() => setShowExitModal(true)}
                   className="w-full py-3 border-2 border-danger text-danger font-bold rounded-button hover:bg-danger/5 transition-all"
@@ -467,14 +467,14 @@ export default function AssignmentInterface() {
                   className={`w-full p-4 rounded-card border-2 text-left transition-all flex items-center justify-between group ${
                     currentAns.student_answer === opt.option_id 
                       ? 'border-primary bg-primary text-white shadow-md' 
-                      : 'border-gray-100 bg-white hover:border-primary/30'
+                      : 'border-surface/10 bg-surface hover:border-primary/30'
                   }`}
                 >
                   <span className="font-medium">{renderTextWithMath(opt.option_text)}</span>
                   <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all ${
                     currentAns.student_answer === opt.option_id 
                       ? 'border-white' 
-                      : 'border-gray-200 group-hover:border-primary/30'
+                      : 'border-surface/20 group-hover:border-primary/30'
                   }`}>
                     {currentAns.student_answer === opt.option_id && (
                       <div className="w-2.5 h-2.5 rounded-full bg-white" />
@@ -489,7 +489,7 @@ export default function AssignmentInterface() {
                 placeholder="Type your answer..."
                 value={currentAns.student_answer || ''}
                 onChange={(e) => handleTextChange(currentQ.id, currentQ.question_number, e.target.value)}
-                className="w-full h-40 p-4 bg-white border-2 border-gray-100 rounded-card focus:outline-none focus:border-primary transition-all resize-none font-medium"
+                className="w-full h-40 p-4 bg-surface border-2 border-surface/10 rounded-card focus:outline-none focus:border-primary transition-all resize-none font-medium text-text-primary"
               />
             </div>
           )}
@@ -497,11 +497,11 @@ export default function AssignmentInterface() {
       </div>
 
       {/* Bottom Nav */}
-      <div className="p-6 bg-white border-t border-gray-100 flex items-center gap-4">
+      <div className="p-6 bg-surface border-t border-surface/10 flex items-center gap-4">
         <button
           disabled={currentIdx === 0}
           onClick={() => setCurrentIdx(currentIdx - 1)}
-          className="flex-1 py-4 border-2 border-gray-100 text-text-muted font-bold rounded-button flex items-center justify-center gap-2 disabled:opacity-30 transition-all"
+          className="flex-1 py-4 border-2 border-surface/10 text-text-muted font-bold rounded-button flex items-center justify-center gap-2 disabled:opacity-30 transition-all"
         >
           <ArrowLeft size={20} />
           Previous
@@ -545,7 +545,7 @@ export default function AssignmentInterface() {
                 ❌ {questions.length - Object.values(answers).filter(a => a.student_answer && a.student_answer.trim() !== '').length} Skipped
               </span>
             </div>
-            <p className="text-xs text-text-muted text-center pt-2 border-t border-gray-50">
+            <p className="text-xs text-text-muted text-center pt-2 border-t border-surface/10">
               Total time: {formatTime(1800 - timeLeft)}
             </p>
           </div>
@@ -571,12 +571,12 @@ function Modal({ show, onClose, icon, title, description, confirmText, confirmCo
           />
           <motion.div 
             initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] max-w-sm bg-white rounded-[24px] p-8 z-[70] shadow-2xl text-center"
+            className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] max-w-sm bg-surface rounded-[24px] p-8 z-[70] shadow-2xl text-center border border-surface/10"
           >
-            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-background rounded-full flex items-center justify-center mx-auto mb-4">
               {icon}
             </div>
-            <h3 className="text-xl font-bold mb-2">{title}</h3>
+            <h3 className="text-xl font-bold mb-2 text-text-primary">{title}</h3>
             <div className="text-text-muted text-sm leading-relaxed mb-8">
               {description}
             </div>
@@ -591,7 +591,7 @@ function Modal({ show, onClose, icon, title, description, confirmText, confirmCo
               <button
                 disabled={loading}
                 onClick={onClose}
-                className="w-full py-3 border-2 border-gray-100 text-text-muted font-bold rounded-button hover:bg-gray-50 transition-all"
+                className="w-full py-3 border-2 border-surface/10 text-text-muted font-bold rounded-button hover:bg-background transition-all"
               >
                 Cancel
               </button>

@@ -109,7 +109,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8 transition-colors duration-300">
       <TopBar 
         title={`Good morning, ${profile?.full_name.split(' ')[0]} 👋`}
         subtitle={`${stats?.current_streak_days || 0} day streak 🔥`}
@@ -148,12 +148,12 @@ export default function Dashboard() {
       </div>
 
       {/* League Progress */}
-      <div className="bg-white p-5 rounded-card shadow-sm border border-gray-100 flex items-center gap-4">
-        <div className="w-12 h-12 bg-indigo-50 rounded-full flex items-center justify-center text-primary">
+      <div className="bg-surface p-5 rounded-card shadow-sm border border-surface/10 flex items-center gap-4">
+        <div className="w-12 h-12 bg-indigo-50/10 rounded-full flex items-center justify-center text-primary">
           <Trophy size={24} />
         </div>
         <div className="flex-1">
-          <h3 className="font-bold text-sm">{stats?.current_league || 'Bronze'} League</h3>
+          <h3 className="font-bold text-sm text-text-primary">{stats?.current_league || 'Bronze'} League</h3>
           <p className="text-[10px] text-text-muted font-medium mt-0.5">
             {500 - (stats?.xp_in_current_league || 0)} XP to Silver
           </p>
@@ -161,7 +161,7 @@ export default function Dashboard() {
         <div className="relative w-12 h-12">
           <svg className="w-full h-full" viewBox="0 0 36 36">
             <path
-              className="text-gray-100"
+              className="text-surface/20"
               strokeDasharray="100, 100"
               strokeWidth="3"
               stroke="currentColor"
@@ -187,7 +187,7 @@ export default function Dashboard() {
       {/* Bulletin Board */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-bold flex items-center gap-2">
+          <h3 className="font-bold flex items-center gap-2 text-text-primary">
             <Megaphone size={18} className="text-primary" />
             Bulletin Board
           </h3>
@@ -196,7 +196,7 @@ export default function Dashboard() {
         {broadcasts.length > 0 ? (
           <div className="space-y-3">
             {/* Latest Broadcast - Bigger */}
-            <div className={`bg-white p-5 rounded-card shadow-md border-l-4 ${broadcasts[0].is_urgent ? 'border-danger' : 'border-primary'} relative`}>
+            <div className={`bg-surface p-5 rounded-card shadow-md border-l-4 ${broadcasts[0].is_urgent ? 'border-danger' : 'border-primary'} relative border-t border-r border-b border-surface/10`}>
               {broadcasts[0].is_urgent && (
                 <span className="absolute top-3 right-3 bg-danger text-[8px] font-bold text-white px-2 py-0.5 rounded-pill">
                   🚨 URGENT
@@ -205,7 +205,7 @@ export default function Dashboard() {
               <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">
                 {broadcasts[0].profiles?.full_name}
               </p>
-              <p className="text-base mt-1 font-bold leading-relaxed">
+              <p className="text-base mt-1 font-bold leading-relaxed text-text-primary">
                 {broadcasts[0].message_text}
               </p>
               <p className="text-[10px] text-text-muted text-right mt-2">
@@ -226,12 +226,12 @@ export default function Dashboard() {
                 ) : (
                   <>
                     {broadcasts.slice(1).map((b) => (
-                      <div key={b.id} className={`bg-white p-3 rounded-card shadow-sm border-l-2 ${b.is_urgent ? 'border-danger' : 'border-primary'} relative`}>
+                      <div key={b.id} className={`bg-surface p-3 rounded-card shadow-sm border-l-2 ${b.is_urgent ? 'border-danger' : 'border-primary'} relative border-t border-r border-b border-surface/10`}>
                         <p className="text-[9px] text-text-muted font-bold uppercase tracking-wider flex justify-between items-center">
                           {b.profiles?.full_name}
                           {b.is_urgent && <span className="text-danger">🚨</span>}
                         </p>
-                        <p className="text-xs mt-1 leading-relaxed text-slate-700">
+                        <p className="text-xs mt-1 leading-relaxed text-text-primary">
                           {b.message_text}
                         </p>
                         <p className="text-[8px] text-text-muted text-right mt-1">
@@ -241,7 +241,7 @@ export default function Dashboard() {
                     ))}
                     <button 
                       onClick={() => setShowAllBroadcasts(false)}
-                      className="w-full py-2 text-[10px] font-bold text-text-muted uppercase tracking-widest hover:bg-gray-50 rounded-lg transition-all"
+                      className="w-full py-2 text-[10px] font-bold text-text-muted uppercase tracking-widest hover:bg-background rounded-lg transition-all"
                     >
                       Show Less
                     </button>
@@ -251,7 +251,7 @@ export default function Dashboard() {
             )}
           </div>
         ) : (
-          <div className="bg-white p-4 rounded-card shadow-sm border border-dashed border-gray-200 text-center text-text-muted text-sm italic">
+          <div className="bg-surface p-4 rounded-card shadow-sm border border-dashed border-surface/20 text-center text-text-muted text-sm italic">
             No broadcasts yet.
           </div>
         )}
@@ -260,19 +260,19 @@ export default function Dashboard() {
       {/* Doubt Section Link */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="font-bold flex items-center gap-2">
+          <h3 className="font-bold flex items-center gap-2 text-text-primary">
             <MessageSquare size={18} className="text-primary" />
             Doubt Section
           </h3>
           <Link to="/doubts" className="text-[10px] font-bold text-primary uppercase tracking-widest hover:underline">Open Section</Link>
         </div>
         <Link to="/doubts" className="block">
-          <div className="bg-white p-5 rounded-card shadow-sm border border-gray-100 flex items-center gap-4 hover:border-primary/30 transition-all active:scale-[0.98]">
+          <div className="bg-surface p-5 rounded-card shadow-sm border border-surface/10 flex items-center gap-4 hover:border-primary/30 transition-all active:scale-[0.98]">
             <div className="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center text-primary">
               <MessageSquare size={24} />
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-sm">Have a Question?</h3>
+              <h3 className="font-bold text-sm text-text-primary">Have a Question?</h3>
               <p className="text-[10px] text-text-muted font-medium mt-0.5">
                 Ask doubts or help others with their queries
               </p>
@@ -284,7 +284,7 @@ export default function Dashboard() {
 
       {/* Task Control */}
       <div className="space-y-4">
-        <h3 className="font-bold flex items-center gap-2">
+        <h3 className="font-bold flex items-center gap-2 text-text-primary">
           <ClipboardList size={18} className="text-primary" />
           Task Control
         </h3>
@@ -299,12 +299,12 @@ export default function Dashboard() {
             
             return (
               <Link key={task.id} to={targetPath} className="block">
-                <div className="bg-white p-4 rounded-card shadow-sm border border-gray-100 flex items-center gap-4 hover:border-primary/30 transition-all active:scale-[0.98]">
+                <div className="bg-surface p-4 rounded-card shadow-sm border border-surface/10 flex items-center gap-4 hover:border-primary/30 transition-all active:scale-[0.98]">
                   <div className={`w-10 h-10 rounded-full ${subjectStyle.lightColor} flex items-center justify-center ${subjectStyle.textColor} font-bold`}>
                     <Icon size={20} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-sm truncate">{task.module_name}</h4>
+                    <h4 className="font-bold text-sm truncate text-text-primary">{task.module_name}</h4>
                     <p className="text-[10px] text-text-muted font-medium mt-0.5">
                       {task.subject} • Due {new Date(task.due_date).toLocaleDateString()}
                     </p>
@@ -332,8 +332,8 @@ export default function Dashboard() {
 
 function StatCard({ icon, label, value, color, textColor }: { icon: React.ReactNode, label: string, value: string, color: string, textColor: string }) {
   return (
-    <div className={`p-4 rounded-card shadow-sm border border-gray-100 space-y-2 ${color}`}>
-      <div className="w-8 h-8 rounded-lg bg-white/80 flex items-center justify-center shadow-sm">
+    <div className={`p-4 rounded-card shadow-sm border border-surface/10 space-y-2 ${color}`}>
+      <div className="w-8 h-8 rounded-lg bg-surface/80 flex items-center justify-center shadow-sm">
         {icon}
       </div>
       <div>

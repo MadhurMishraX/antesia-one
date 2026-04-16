@@ -4,9 +4,11 @@ import { Home, BookOpen, Trophy, User, Zap, ClipboardList, BarChart3, MessageSqu
 import { useAuth } from '../context/AuthContext';
 
 export function StudentLayout() {
+  const { isDarkMode } = useAuth();
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <Outlet />
+    <div className={isDarkMode ? 'dark' : ''}>
+      <div className="min-h-screen bg-background text-text-primary pb-24 transition-colors duration-300">
+        <Outlet />
       
       <nav className="bottom-nav-glass">
         <NavLink to="/" className={({ isActive }) => `nav-tab ${isActive ? 'nav-tab-active' : 'nav-tab-inactive'}`}>
@@ -42,18 +44,21 @@ export function StudentLayout() {
           )}
         </NavLink>
       </nav>
+      </div>
     </div>
   );
 }
 
 export function TeacherLayout() {
+  const { isDarkMode } = useAuth();
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <Outlet />
-      
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-50">
-        <nav className="bg-white/80 backdrop-blur-xl border border-white/20 shadow-2xl rounded-full p-2 flex items-center justify-between">
-          <NavLink to="/teacher" end className={({ isActive }) => `flex-1 flex flex-col items-center gap-1 py-2 rounded-full transition-all ${isActive ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-text-muted hover:bg-gray-50'}`}>
+    <div className={isDarkMode ? 'dark' : ''}>
+      <div className="min-h-screen bg-background text-text-primary pb-24 transition-colors duration-300">
+        <Outlet />
+        
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-md z-50">
+          <nav className="bg-surface/80 backdrop-blur-xl border border-surface/20 shadow-2xl rounded-full p-2 flex items-center justify-between">
+            <NavLink to="/teacher" end className={({ isActive }) => `flex-1 flex flex-col items-center gap-1 py-2 rounded-full transition-all ${isActive ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-text-muted hover:bg-surface/50'}`}>
             <Zap size={20} />
             <span className="text-[10px] font-bold uppercase tracking-widest">Command</span>
           </NavLink>
@@ -74,6 +79,7 @@ export function TeacherLayout() {
             <span className="text-[10px] font-bold uppercase tracking-widest">Doubts</span>
           </NavLink>
         </nav>
+      </div>
       </div>
     </div>
   );

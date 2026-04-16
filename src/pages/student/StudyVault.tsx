@@ -78,7 +78,7 @@ export default function StudyVault() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 transition-colors duration-300">
       <TopBar 
         title="Study Vault"
         subtitle="Your learning journey"
@@ -88,7 +88,7 @@ export default function StudyVault() {
       <div className="relative">
         <button 
           onClick={() => setShowSubjectPicker(!showSubjectPicker)}
-          className="w-full bg-white p-4 rounded-pill shadow-sm border border-gray-100 flex items-center justify-between font-bold text-sm"
+          className="w-full bg-surface p-4 rounded-pill shadow-sm border border-surface/10 flex items-center justify-between font-bold text-sm"
         >
           {subject}
           <ChevronDown size={20} className={`transition-transform ${showSubjectPicker ? 'rotate-180' : ''}`} />
@@ -99,22 +99,22 @@ export default function StudyVault() {
             <>
               <motion.div 
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/20 z-40"
+                className="fixed inset-0 bg-black/40 z-40 backdrop-blur-sm"
                 onClick={() => setShowSubjectPicker(false)}
               />
               <motion.div 
                 initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
-                className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[32px] p-8 z-50 shadow-2xl"
+                className="fixed bottom-0 left-0 right-0 bg-surface rounded-t-[32px] p-8 z-50 shadow-2xl border-t border-surface/10"
               >
-                <h3 className="text-xl font-bold mb-6">Select Subject</h3>
+                <h3 className="text-xl font-bold mb-6 text-text-primary">Select Subject</h3>
                 <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
                   <button
                     onClick={() => { setSubject('All Subjects'); setShowSubjectPicker(false); }}
                     className={`w-full p-4 rounded-card text-left font-bold transition-all flex items-center gap-4 ${
-                      subject === 'All Subjects' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-gray-50 text-text-primary hover:bg-gray-100'
+                      subject === 'All Subjects' ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-background text-text-primary hover:bg-surface/50'
                     }`}
                   >
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${subject === 'All Subjects' ? 'bg-white/20' : 'bg-white shadow-sm'}`}>
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${subject === 'All Subjects' ? 'bg-white/20' : 'bg-surface shadow-sm'}`}>
                       <Search size={20} />
                     </div>
                     <span>All Subjects</span>
@@ -128,10 +128,10 @@ export default function StudyVault() {
                         key={s.id}
                         onClick={() => { setSubject(s.name); setShowSubjectPicker(false); }}
                         className={`w-full p-4 rounded-card text-left font-bold transition-all flex items-center gap-4 ${
-                          isActive ? `${s.color} text-white shadow-lg shadow-primary/20` : 'bg-gray-50 text-text-primary hover:bg-gray-100'
+                          isActive ? `${s.color} text-white shadow-lg shadow-primary/20` : 'bg-background text-text-primary hover:bg-surface/50'
                         }`}
                       >
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isActive ? 'bg-white/20' : 'bg-white shadow-sm'} ${isActive ? 'text-white' : s.textColor}`}>
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${isActive ? 'bg-white/20' : 'bg-surface shadow-sm'} ${isActive ? 'text-white' : s.textColor}`}>
                           <Icon size={20} />
                         </div>
                         <span>{s.name}</span>
@@ -146,7 +146,7 @@ export default function StudyVault() {
       </div>
 
       {/* Tab Bar */}
-      <div className="flex border-b border-gray-100">
+      <div className="flex border-b border-surface/10">
         {(['due', 'completed', 'missed'] as const).map((tab) => (
           <button
             key={tab}
@@ -180,12 +180,12 @@ export default function StudyVault() {
                 to={assignment.userSubmission?.status === 'submitted' ? `/results/${assignment.userSubmission.id}` : `/assignment/${assignment.id}/interface`} 
                 className="block"
               >
-                <div className={`bg-white p-4 rounded-card shadow-sm border border-gray-100 flex items-center gap-4 transition-all active:scale-[0.98] ${activeTab === 'missed' ? 'opacity-70' : ''}`}>
+                <div className={`bg-surface p-4 rounded-card shadow-sm border border-surface/10 flex items-center gap-4 transition-all active:scale-[0.98] ${activeTab === 'missed' ? 'opacity-70' : ''}`}>
                   <div className={`w-10 h-10 rounded-full ${subjectStyle.lightColor} flex items-center justify-center ${subjectStyle.textColor} font-bold`}>
                     <Icon size={20} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-sm truncate">{assignment.module_name}</h4>
+                    <h4 className="font-bold text-sm truncate text-text-primary">{assignment.module_name}</h4>
                     <div className="flex items-center gap-2 mt-0.5">
                       <p className="text-[10px] text-text-muted font-medium">
                         {new Date(assignment.due_date).toLocaleDateString()}
@@ -211,7 +211,7 @@ export default function StudyVault() {
           })
         ) : (
           <div className="py-12 text-center space-y-2">
-            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto text-text-muted">
+            <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center mx-auto text-text-muted">
               <Search size={24} />
             </div>
             <p className="text-text-muted text-sm font-medium">No assignments found</p>
@@ -221,18 +221,18 @@ export default function StudyVault() {
 
       {/* Doubts Subsection */}
       <div className="pt-6 space-y-4">
-        <div className="h-px bg-gray-100 w-full" />
+        <div className="h-px bg-surface/10 w-full" />
         <div className="flex items-center justify-between">
-          <h3 className="font-bold text-sm">Community Doubts</h3>
+          <h3 className="font-bold text-sm text-text-primary">Community Doubts</h3>
           <Link to="/doubts" className="text-[10px] font-bold text-primary uppercase tracking-widest hover:underline">View All</Link>
         </div>
         <Link to="/doubts" className="block">
-          <div className="bg-white p-5 rounded-card shadow-sm border border-gray-100 flex items-center gap-4 hover:border-primary/30 transition-all active:scale-[0.98]">
+          <div className="bg-surface p-5 rounded-card shadow-sm border border-surface/10 flex items-center gap-4 hover:border-primary/30 transition-all active:scale-[0.98]">
             <div className="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center text-primary">
               <MessageSquare size={20} />
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-xs">Have a Question?</h3>
+              <h3 className="font-bold text-xs text-text-primary">Have a Question?</h3>
               <p className="text-[10px] text-text-muted font-medium mt-0.5">
                 Ask doubts or help others with their queries
               </p>

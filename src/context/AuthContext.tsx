@@ -6,8 +6,10 @@ interface AuthContextType {
   user: User | null;
   profile: Profile | null;
   loading: boolean;
+  isDarkMode: boolean;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  toggleDarkMode: (enabled: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -16,11 +18,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const fetchProfile = async (userId: string) => {
     const profileData = await getProfile(userId);
     setProfile(profileData);
+    setIsDarkMode(profileData?.dark_mode_enabled || false);
     setLoading(false);
+  };
+
+  const toggleDarkMode = (enabled: boolean) => {
+    setIsDarkMode(enabled);
   };
 
   const refreshProfile = async () => {
@@ -63,8 +71,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user,
       profile,
       loading,
+      isDarkMode,
       signOut,
-      refreshProfile
+      refreshProfile,
+      toggleDarkMode
     }}>
       {children}
     </AuthContext.Provider>

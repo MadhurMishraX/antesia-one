@@ -77,23 +77,23 @@ export default function DoubtPost() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background transition-colors duration-300">
       {/* Top Bar */}
-      <div className="p-6 flex items-center gap-4 bg-white shadow-sm sticky top-0 z-30">
+      <div className="p-6 flex items-center gap-4 bg-surface shadow-sm sticky top-0 z-30 border-b border-surface/10">
         <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-text-muted hover:text-primary transition-colors">
           <ArrowLeft size={24} />
         </button>
-        <h2 className="text-lg font-bold">Post a Doubt</h2>
+        <h2 className="text-lg font-bold text-text-primary">Post a Doubt</h2>
       </div>
 
       <div className="p-6">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white rounded-card shadow-sm border border-gray-100 p-6 space-y-6"
+          className="bg-surface rounded-card shadow-sm border border-surface/10 p-6 space-y-6"
         >
           <div className="space-y-4">
-            <div className="bg-gray-50 p-4 rounded-lg border border-gray-100">
+            <div className="bg-background p-4 rounded-lg border border-surface/10">
               <textarea 
                 readOnly
                 value={preFilled}
@@ -106,11 +106,11 @@ export default function DoubtPost() {
               placeholder="Describe your doubt in detail..."
               value={doubtText}
               onChange={(e) => setDoubtText(e.target.value)}
-              className="w-full h-64 p-4 rounded-lg border-2 border-gray-100 focus:outline-none focus:border-primary transition-all resize-none text-sm font-medium"
+              className="w-full h-64 p-4 rounded-lg border-2 border-surface/10 bg-background focus:outline-none focus:border-primary transition-all resize-none text-sm font-medium text-text-primary"
             />
           </div>
 
-          <div className="flex items-center justify-end pt-4 border-t border-gray-50">
+          <div className="flex items-center justify-end pt-4 border-t border-surface/10">
             <button 
               disabled={loading || !doubtText.trim()}
               onClick={handleSubmit}

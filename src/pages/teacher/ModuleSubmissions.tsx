@@ -247,15 +247,15 @@ export default function ModuleSubmissions() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col transition-colors duration-300">
       {/* Top Bar */}
-      <div className="p-4 bg-white shadow-sm flex items-center justify-between sticky top-0 z-30">
+      <div className="p-4 bg-surface shadow-sm flex items-center justify-between sticky top-0 z-30 border-b border-surface/10">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate(-1)} className="p-2 text-text-muted hover:text-primary transition-colors">
             <ArrowLeft size={24} />
           </button>
           <div>
-            <h2 className="text-sm font-bold truncate max-w-[200px]">{module?.module_name}</h2>
+            <h2 className="text-sm font-bold truncate max-w-[200px] text-text-primary">{module?.module_name}</h2>
             <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Submissions</p>
           </div>
         </div>
@@ -267,7 +267,7 @@ export default function ModuleSubmissions() {
           >
             <ChevronLeft size={24} />
           </button>
-          <span className="text-xs font-bold font-mono">
+          <span className="text-xs font-bold font-mono text-text-primary">
             {currentIndex + 1} / {submissions.length}
           </span>
           <button 
@@ -283,13 +283,13 @@ export default function ModuleSubmissions() {
       <div className="flex-1 overflow-y-auto p-6">
         <div className="max-w-3xl mx-auto space-y-8">
           {/* Student Header */}
-          <div className="bg-white rounded-[32px] p-6 shadow-sm border border-gray-100 flex items-center justify-between">
+          <div className="bg-surface rounded-[32px] p-6 shadow-sm border border-surface/10 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                 <User size={24} />
               </div>
               <div>
-                <h3 className="font-bold text-lg">{submissions[currentIndex]?.profiles?.full_name}</h3>
+                <h3 className="font-bold text-lg text-text-primary">{submissions[currentIndex]?.profiles?.full_name}</h3>
                 <p className="text-xs font-bold text-text-muted uppercase tracking-widest">{submissions[currentIndex]?.profiles?.login_id}</p>
               </div>
             </div>
@@ -301,7 +301,7 @@ export default function ModuleSubmissions() {
                   {submissions[currentIndex]?.status}
                 </span>
                 <Award size={18} className="text-warning" />
-                <span className="text-xl font-bold">{submissions[currentIndex]?.score} / {submissions[currentIndex]?.total_questions}</span>
+                <span className="text-xl font-bold text-text-primary">{submissions[currentIndex]?.score} / {submissions[currentIndex]?.total_questions}</span>
               </div>
               <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Current Score</p>
             </div>
@@ -309,17 +309,17 @@ export default function ModuleSubmissions() {
 
           {/* Stats Grid */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-white p-4 rounded-card border border-gray-100 text-center">
+            <div className="bg-surface p-4 rounded-card border border-surface/10 text-center">
               <Zap size={20} className="text-warning mx-auto mb-1" />
-              <p className="text-lg font-bold">{submissions[currentIndex]?.xp_earned}</p>
+              <p className="text-lg font-bold text-text-primary">{submissions[currentIndex]?.xp_earned}</p>
               <p className="text-[8px] font-bold text-text-muted uppercase tracking-widest">XP Earned</p>
             </div>
-            <div className="bg-white p-4 rounded-card border border-gray-100 text-center">
+            <div className="bg-surface p-4 rounded-card border border-surface/10 text-center">
               <Clock size={20} className="text-primary mx-auto mb-1" />
-              <p className="text-lg font-bold">{Math.floor((submissions[currentIndex]?.time_taken_seconds || 0) / 60)}m</p>
+              <p className="text-lg font-bold text-text-primary">{Math.floor((submissions[currentIndex]?.time_taken_seconds || 0) / 60)}m</p>
               <p className="text-[8px] font-bold text-text-muted uppercase tracking-widest">Time Taken</p>
             </div>
-            <div className="bg-white p-4 rounded-card border border-gray-100 text-center">
+            <div className="bg-surface p-4 rounded-card border border-surface/10 text-center">
               <HelpCircle size={20} className="text-violet-500 mx-auto mb-1" />
               <p className="text-lg font-bold text-violet-500">{pendingCount}</p>
               <p className="text-[8px] font-bold text-text-muted uppercase tracking-widest">Pending</p>
@@ -335,10 +335,10 @@ export default function ModuleSubmissions() {
               const isPending = q.question_type === 'text_answer' && !ans?.approval_status && ans?.student_answer;
               
               return (
-                <div key={q.id} className="bg-white rounded-[24px] border border-gray-100 overflow-hidden shadow-sm">
-                  <div className="p-5 border-b border-gray-50 flex items-center justify-between bg-gray-50/50">
+                <div key={q.id} className="bg-surface rounded-[24px] border border-surface/10 overflow-hidden shadow-sm">
+                  <div className="p-5 border-b border-surface/5 flex items-center justify-between bg-background">
                     <div className="flex items-center gap-3">
-                      <span className="w-8 h-8 rounded-lg bg-white flex items-center justify-center font-bold text-xs shadow-sm">Q{i + 1}</span>
+                      <span className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center font-bold text-xs shadow-sm text-text-primary">Q{i + 1}</span>
                       <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{q.question_type}</span>
                     </div>
                     {ans?.is_correct === true && <CheckCircle2 size={20} className="text-success" />}
@@ -347,7 +347,7 @@ export default function ModuleSubmissions() {
                   </div>
                   
                   <div className="p-6 space-y-4">
-                    <div className="text-sm font-medium leading-relaxed">
+                    <div className="text-sm font-medium leading-relaxed text-text-primary">
                       {renderTextWithMath(q.question_text)}
                     </div>
 
@@ -356,7 +356,7 @@ export default function ModuleSubmissions() {
                       <div className={`p-4 rounded-xl border-2 text-sm font-bold ${
                         ans?.is_correct === true ? 'bg-success/5 border-success text-success' :
                         ans?.is_correct === false ? 'bg-danger/5 border-danger text-danger' :
-                        'bg-gray-50 border-transparent text-text-primary'
+                        'bg-background border-transparent text-text-primary'
                       }`}>
                         {q.question_type === 'MCQ' ? (
                           q.options?.find((o: any) => o.option_id === ans?.student_answer)?.option_text || '(No Answer)'

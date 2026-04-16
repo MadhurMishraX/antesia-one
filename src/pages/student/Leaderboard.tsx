@@ -63,7 +63,7 @@ export default function Leaderboard() {
   ];
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8 transition-colors duration-300">
       <TopBar 
         title="Leaderboard"
         subtitle="Global Rankings"
@@ -87,12 +87,12 @@ export default function Leaderboard() {
             >
               <div className="relative">
                 <div className={`rounded-full overflow-hidden border-4 shadow-lg ${
-                  isFirst ? 'w-20 h-20 border-warning' : 'w-16 h-16 border-white'
+                  isFirst ? 'w-20 h-20 border-warning' : 'w-16 h-16 border-surface'
                 }`}>
                   {getPhoto(s) ? (
                     <img src={getPhoto(s)} alt="PFP" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100 text-text-muted font-bold text-xl">
+                    <div className="w-full h-full flex items-center justify-center bg-surface text-text-muted font-bold text-xl">
                       {getDisplayName(s)[0]}
                     </div>
                   )}
@@ -109,13 +109,13 @@ export default function Leaderboard() {
                 </div>
               </div>
               <div className="text-center">
-                <p className={`font-bold text-xs truncate max-w-[80px] ${isFirst ? 'text-lg' : ''}`}>
+                <p className={`font-bold text-xs truncate max-w-[80px] text-text-primary ${isFirst ? 'text-lg' : ''}`}>
                   {getDisplayName(s).split(' ')[0]}
                 </p>
                 <p className="text-[10px] text-text-muted font-bold">{s.total_xp} XP</p>
               </div>
               <div className={`w-full rounded-t-2xl shadow-inner ${
-                isFirst ? 'h-24 bg-warning shadow-[0_-4px_12px_rgba(245,158,11,0.2)]' : isSecond ? 'h-16 bg-gray-300' : 'h-12 bg-amber-700/40'
+                isFirst ? 'h-24 bg-warning shadow-[0_-4px_12px_rgba(245,158,11,0.2)]' : isSecond ? 'h-16 bg-slate-400' : 'h-12 bg-amber-700/60'
               }`} />
             </motion.div>
           );
@@ -128,22 +128,22 @@ export default function Leaderboard() {
           const isMe = s.student_id === profile?.id;
           const isTop3 = s.computedRank <= 3;
           const rankColor = s.computedRank === 1 ? 'bg-warning/10 border-warning/30' : 
-                            s.computedRank === 2 ? 'bg-slate-200/50 border-slate-300/30' : 
+                            s.computedRank === 2 ? 'bg-slate-400/10 border-slate-400/30' : 
                             s.computedRank === 3 ? 'bg-amber-700/10 border-amber-700/30' : '';
           
           return (
             <div 
               key={s.student_id} 
               className={`p-4 rounded-card shadow-sm border flex items-center gap-4 transition-all ${
-                isMe ? 'bg-primary/5 border-primary border-l-4' : isTop3 ? `${rankColor} border-l-4` : 'bg-white border-gray-100'
+                isMe ? 'bg-primary/10 border-primary border-l-4' : isTop3 ? `${rankColor} border-l-4` : 'bg-surface border-surface/10'
               }`}
             >
               <span className={`w-6 text-sm font-bold ${
                 s.computedRank === 1 ? 'text-warning' : 
-                s.computedRank === 2 ? 'text-slate-500' : 
-                s.computedRank === 3 ? 'text-amber-800' : 'text-text-muted'
+                s.computedRank === 2 ? 'text-slate-400' : 
+                s.computedRank === 3 ? 'text-amber-700' : 'text-text-muted'
               }`}>{s.computedRank}</span>
-              <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden">
+              <div className="w-10 h-10 rounded-full bg-background overflow-hidden">
                 {getPhoto(s) ? (
                   <img src={getPhoto(s)} alt="PFP" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 ) : (
@@ -153,7 +153,7 @@ export default function Leaderboard() {
                 )}
               </div>
               <div className="flex-1">
-                <p className="font-bold text-sm">{getDisplayName(s)}</p>
+                <p className="font-bold text-sm text-text-primary">{getDisplayName(s)}</p>
                 <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">{s.current_league}</p>
               </div>
               <p className={`font-bold text-sm ${isMe ? 'text-primary' : 'text-text-muted'}`}>{s.total_xp} XP</p>

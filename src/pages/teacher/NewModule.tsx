@@ -15,7 +15,7 @@ function renderMixed(text: string) {
   if (dollarCount < 2) return null;
   const parts = text.split(/(\$[^$]+\$)/g);
   return (
-    <div className="px-4 py-3 bg-gray-50 rounded-[16px] text-sm font-medium leading-relaxed">
+    <div className="px-4 py-3 bg-background rounded-[16px] text-sm font-medium leading-relaxed text-text-primary border border-surface/10">
       {parts.map((part, i) =>
         part.startsWith('$') && part.endsWith('$')
           ? <InlineMath key={i} math={part.slice(1, -1)} />
@@ -183,21 +183,21 @@ Start with this header:
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col pb-24">
+    <div className="min-h-screen bg-background flex flex-col pb-24 transition-colors duration-300">
       {/* Top Bar */}
-      <div className="p-6 flex items-center justify-between bg-white/80 backdrop-blur-xl border-b border-gray-100 sticky top-0 z-30">
+      <div className="p-6 flex items-center justify-between bg-surface/80 backdrop-blur-xl border-b border-surface/10 sticky top-0 z-30">
         <div className="flex items-center gap-4">
-          <button onClick={() => step === 1 ? navigate(-1) : setStep(1)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
-            <ArrowLeft size={24} />
+          <button onClick={() => step === 1 ? navigate(-1) : setStep(1)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-background transition-colors">
+            <ArrowLeft size={24} className="text-text-primary" />
           </button>
           <div>
-            <h2 className="text-lg font-bold">New Module</h2>
+            <h2 className="text-lg font-bold text-text-primary">New Module</h2>
             <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Step {step} of 2</p>
           </div>
         </div>
         <div className="flex items-center gap-1">
           {[1, 2].map(s => (
-            <div key={s} className={`w-2 h-2 rounded-full transition-all ${step === s ? 'bg-primary w-4' : 'bg-gray-200'}`} />
+            <div key={s} className={`w-2 h-2 rounded-full transition-all ${step === s ? 'bg-primary w-4' : 'bg-surface/20'}`} />
           ))}
         </div>
       </div>
@@ -210,7 +210,7 @@ Start with this header:
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
-              className="bg-white rounded-[32px] shadow-sm border border-gray-100 p-8 space-y-8"
+              className="bg-surface rounded-[32px] shadow-sm border border-surface/10 p-8 space-y-8"
             >
               <div className="space-y-6">
                 <div className="space-y-2">
@@ -220,7 +220,7 @@ Start with this header:
                     placeholder="e.g. Introduction to Calculus"
                     value={metadata.name}
                     onChange={(e) => setMetadata({ ...metadata, name: e.target.value })}
-                    className="w-full p-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-primary/20 focus:outline-none transition-all font-medium"
+                    className="w-full p-4 bg-background border border-transparent rounded-[20px] focus:bg-surface focus:border-primary/20 focus:outline-none transition-all font-medium text-text-primary"
                   />
                 </div>
 
@@ -231,7 +231,7 @@ Start with this header:
                       <select 
                         value={metadata.priority}
                         onChange={(e) => handlePriorityChange(e.target.value)}
-                        className="w-full p-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-primary/20 focus:outline-none transition-all font-bold text-sm appearance-none pr-10"
+                        className="w-full p-4 bg-background border border-transparent rounded-[20px] focus:bg-surface focus:border-primary/20 focus:outline-none transition-all font-bold text-sm appearance-none pr-10 text-text-primary"
                       >
                         <option>Crucial</option>
                         <option>Vital</option>
@@ -247,7 +247,7 @@ Start with this header:
                       type="number"
                       value={metadata.xp}
                       onChange={(e) => setMetadata({ ...metadata, xp: parseInt(e.target.value) })}
-                      className="w-full p-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-primary/20 focus:outline-none transition-all font-bold text-sm"
+                      className="w-full p-4 bg-background border border-transparent rounded-[20px] focus:bg-surface focus:border-primary/20 focus:outline-none transition-all font-bold text-sm text-text-primary"
                     />
                   </div>
                 </div>
@@ -258,7 +258,7 @@ Start with this header:
                     type="datetime-local"
                     value={metadata.dueDate}
                     onChange={(e) => setMetadata({ ...metadata, dueDate: e.target.value })}
-                    className="w-full p-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-primary/20 focus:outline-none transition-all font-medium"
+                    className="w-full p-4 bg-background border border-transparent rounded-[20px] focus:bg-surface focus:border-primary/20 focus:outline-none transition-all font-medium text-text-primary"
                   />
                 </div>
 
@@ -275,10 +275,10 @@ Start with this header:
                           className={`flex items-center gap-3 p-3 rounded-2xl border-2 transition-all text-left ${
                             isSelected 
                               ? `${s.lightColor} ${s.textColor} border-primary shadow-sm` 
-                              : 'bg-gray-50 border-transparent hover:border-gray-200 text-text-muted'
+                              : 'bg-background border-transparent hover:border-surface/20 text-text-muted'
                           }`}
                         >
-                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${isSelected ? 'bg-white shadow-sm' : 'bg-white/50'}`}>
+                          <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${isSelected ? 'bg-white shadow-sm' : 'bg-surface/50'}`}>
                             <Icon size={16} />
                           </div>
                           <span className="text-xs font-bold truncate">{s.name}</span>
@@ -318,7 +318,7 @@ Start with this header:
               {mode === 'forms' ? (
                 <div className="space-y-6">
                   {questions.map((q, i) => (
-                    <div key={q.id} className="bg-white rounded-[32px] shadow-sm border border-gray-100 p-8 space-y-6 relative group">
+                    <div key={q.id} className="bg-surface rounded-[32px] shadow-sm border border-surface/10 p-8 space-y-6 relative group">
                       <button 
                         onClick={() => deleteQuestion(q.id)}
                         className="absolute top-6 right-6 text-danger hover:bg-danger/5 p-2 rounded-full transition-colors opacity-0 group-hover:opacity-100"
@@ -348,7 +348,7 @@ Start with this header:
                             placeholder="Type question here (LaTeX supported with $...$)"
                             value={q.text}
                             onChange={(e) => updateQuestion(q.id, { text: e.target.value })}
-                            className="w-full h-32 p-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-primary/20 focus:outline-none transition-all text-sm font-medium resize-none"
+                            className="w-full h-32 p-4 bg-background border border-transparent rounded-[20px] focus:bg-surface focus:border-primary/20 focus:outline-none transition-all text-sm font-medium resize-none text-text-primary"
                           />
                           {renderMixed(q.text)}
                         </div>
@@ -366,7 +366,7 @@ Start with this header:
                                     updateQuestion(q.id, { options: newOpts });
                                   }}
                                   className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all ${
-                                    opt.isCorrect ? 'bg-success border-success text-white' : 'border-gray-200 hover:border-primary'
+                                    opt.isCorrect ? 'bg-success border-success text-white' : 'border-surface/20 hover:border-primary'
                                   }`}
                                 >
                                   {opt.isCorrect && <Check size={14} />}
@@ -379,7 +379,7 @@ Start with this header:
                                     const newOpts = q.options.map((o: any, idx: number) => idx === optIdx ? { ...o, text: e.target.value } : o);
                                     updateQuestion(q.id, { options: newOpts });
                                   }}
-                                  className="flex-1 p-3 bg-gray-50 border border-transparent rounded-[16px] text-sm font-medium focus:bg-white focus:border-primary/20 focus:outline-none transition-all"
+                                  className="flex-1 p-3 bg-background border border-transparent rounded-[16px] text-sm font-medium focus:bg-surface focus:border-primary/20 focus:outline-none transition-all text-text-primary"
                                 />
                                 <button 
                                   onClick={() => {
@@ -412,7 +412,7 @@ Start with this header:
                             placeholder="Type correct answer"
                             value={q.correctAnswer}
                             onChange={(e) => updateQuestion(q.id, { correctAnswer: e.target.value })}
-                            className="w-full p-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-primary/20 focus:outline-none transition-all font-bold text-sm"
+                            className="w-full p-4 bg-background border border-transparent rounded-[20px] focus:bg-surface focus:border-primary/20 focus:outline-none transition-all font-bold text-sm text-text-primary"
                           />
                         </div>
                       )}
@@ -423,7 +423,7 @@ Start with this header:
                           placeholder="Why is this answer correct?"
                           value={q.explanation}
                           onChange={(e) => updateQuestion(q.id, { explanation: e.target.value })}
-                          className="w-full h-20 p-4 bg-gray-50 border border-transparent rounded-[20px] focus:bg-white focus:border-primary/20 focus:outline-none transition-all text-xs font-medium resize-none"
+                          className="w-full h-20 p-4 bg-background border border-transparent rounded-[20px] focus:bg-surface focus:border-primary/20 focus:outline-none transition-all text-xs font-medium resize-none text-text-primary"
                         />
                       </div>
                     </div>
@@ -499,14 +499,14 @@ Start with this header:
             />
             <motion.div 
               initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
-              className="fixed bottom-0 left-0 right-0 bg-white rounded-t-[40px] p-10 z-[70] shadow-2xl max-h-[85vh] overflow-y-auto"
+              className="fixed bottom-0 left-0 right-0 bg-surface rounded-t-[40px] p-10 z-[70] shadow-2xl max-h-[85vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-8">
                 <div>
-                  <h3 className="text-2xl font-bold">WHAT IS M-MARKUP?</h3>
+                  <h3 className="text-2xl font-bold text-text-primary">WHAT IS M-MARKUP?</h3>
                   <p className="text-xs font-bold text-text-muted uppercase tracking-widest mt-1">M-Markup (or Madhur's Markup)</p>
                 </div>
-                <button onClick={() => setShowInfo(false)} className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 text-text-muted">
+                <button onClick={() => setShowInfo(false)} className="w-12 h-12 flex items-center justify-center rounded-full bg-background text-text-muted">
                   <X size={24} />
                 </button>
               </div>

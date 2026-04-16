@@ -46,11 +46,11 @@ export default function Auditor() {
   };
 
   return (
-    <div className="p-6 space-y-8">
+    <div className="p-6 space-y-8 transition-colors duration-300">
       {/* Top Bar */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Auditor</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-text-primary">Auditor</h1>
           <p className="text-xs font-bold text-text-muted uppercase tracking-widest mt-1">Manage Modules</p>
         </div>
         <Link to="/teacher/auditor/new">
@@ -70,7 +70,7 @@ export default function Auditor() {
           placeholder="Search modules or subjects..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-[20px] shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all text-sm font-medium"
+          className="w-full pl-12 pr-4 py-4 bg-surface border border-surface/10 rounded-[20px] shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/10 transition-all text-sm font-medium text-text-primary"
         />
       </div>
 
@@ -87,15 +87,15 @@ export default function Auditor() {
             
             return (
               <Link key={module.id} to={`/teacher/auditor/${module.id}`} className="block group">
-                <div className="bg-white p-5 rounded-[24px] shadow-sm border border-gray-100 flex items-center gap-4 hover:border-primary/30 transition-all active:scale-[0.98]">
+                <div className="bg-surface p-5 rounded-[24px] shadow-sm border border-surface/10 flex items-center gap-4 hover:border-primary/30 transition-all active:scale-[0.98]">
                   <div className={`w-12 h-12 rounded-[16px] ${subjectStyle.lightColor} flex items-center justify-center ${subjectStyle.textColor} group-hover:bg-primary group-hover:text-white transition-colors`}>
                     <Icon size={24} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors">{module.module_name}</h4>
+                    <h4 className="font-bold text-sm truncate group-hover:text-primary transition-colors text-text-primary">{module.module_name}</h4>
                     <div className="flex items-center gap-2 mt-1">
                       <span className={`text-[10px] font-bold ${subjectStyle.textColor} uppercase tracking-widest`}>{module.subject}</span>
-                      <span className="w-1 h-1 rounded-full bg-gray-300" />
+                      <span className="w-1 h-1 rounded-full bg-surface/20" />
                       <span className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Due {new Date(module.due_date).toLocaleDateString()}</span>
                     </div>
                   </div>
@@ -113,7 +113,7 @@ export default function Auditor() {
           })
         ) : (
           <div className="py-20 text-center space-y-4">
-            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto text-text-muted">
+            <div className="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto text-text-muted">
               <ClipboardList size={32} />
             </div>
             <div>

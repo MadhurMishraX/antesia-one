@@ -6,13 +6,13 @@ import { Camera, Moon, Bell, Trophy, Key, LogOut, ChevronLeft, Flame, Sparkles }
 import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
-  const { profile, signOut, refreshProfile } = useAuth();
+  const { profile, signOut, refreshProfile, isDarkMode, toggleDarkMode } = useAuth();
   const navigate = useNavigate();
   const [isEditingName, setIsEditingName] = useState(false);
   const [newName, setNewName] = useState(profile?.full_name || '');
   const [isUpdating, setIsUpdating] = useState(false);
   const [settings, setSettings] = useState({
-    darkMode: profile?.dark_mode_enabled || false,
+    darkMode: isDarkMode,
     notifications: profile?.push_notifications_enabled || true,
     showLeaderboard: !profile?.is_anonymous_on_leaderboard,
   });
@@ -20,6 +20,10 @@ export default function Profile() {
   const [toastMsg, setToastMsg] = useState('');
 
   const [stats, setStats] = useState<any>(null);
+
+  React.useEffect(() => {
+    setSettings(prev => ({ ...prev, darkMode: isDarkMode }));
+  }, [isDarkMode]);
 
   React.useEffect(() => {
     async function fetchStats() {
@@ -41,6 +45,10 @@ export default function Profile() {
 
     const newValue = !settings[key];
     setSettings(prev => ({ ...prev, [key]: newValue }));
+
+    if (key === 'darkMode') {
+      toggleDarkMode(newValue);
+    }
 
     const updateMap: any = {
       darkMode: { dark_mode_enabled: newValue },
@@ -91,12 +99,12 @@ export default function Profile() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f9f9fb] pb-32">
+    <div className="min-h-screen bg-background pb-32 transition-colors duration-300">
       {/* Top Bar */}
-      <header className="w-full sticky top-0 z-40 bg-[#f9f9fb]/80 backdrop-blur-xl flex items-center justify-between px-6 h-16">
+      <header className="w-full sticky top-0 z-40 bg-background/80 backdrop-blur-xl flex items-center justify-between px-6 h-16">
         <button 
           onClick={() => navigate(-1)}
-          className="text-slate-500 hover:bg-gray-100 transition-colors p-2 rounded-full active:scale-90"
+          className="text-text-muted hover:bg-surface/50 transition-colors p-2 rounded-full active:scale-90"
         >
           <ChevronLeft size={24} />
         </button>
@@ -108,7 +116,7 @@ export default function Profile() {
         {/* Profile Header */}
         <section className="flex flex-col items-center">
           <div className="relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-sm bg-gray-100">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-surface shadow-sm bg-surface">
               {profile?.profile_photo_url ? (
                 <img 
                   src={profile.profile_photo_url} 
@@ -130,7 +138,7 @@ export default function Profile() {
                   type="text" 
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="text-center text-2xl font-extrabold tracking-tight text-slate-900 bg-white border-b-2 border-primary focus:outline-none w-full"
+                  className="text-center text-2xl font-extrabold tracking-tight text-text-primary bg-transparent border-b-2 border-primary focus:outline-none w-full"
                   autoFocus
                 />
                 <div className="flex justify-center gap-4">
@@ -152,14 +160,14 @@ export default function Profile() {
               </div>
             ) : (
               <div className="group cursor-pointer" onClick={() => setIsEditingName(true)}>
-                <h2 className="text-3xl font-extrabold tracking-tight text-slate-900 flex items-center justify-center gap-2">
+                <h2 className="text-3xl font-extrabold tracking-tight text-text-primary flex items-center justify-center gap-2">
                   {profile?.full_name}
                   <Sparkles size={18} className="text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                 </h2>
                 <p className="text-primary font-bold text-[10px] uppercase tracking-widest mt-1 opacity-0 group-hover:opacity-100 transition-opacity">Click to edit name</p>
               </div>
             )}
-            <p className="text-slate-500 font-medium mt-1 tracking-wide">
+            <p className="text-text-muted font-medium mt-1 tracking-wide">
               {profile?.role === 'student' ? `Student ID: ${profile?.login_id}` : `Teacher ID: ${profile?.login_id}`}
             </p>
           </div>
@@ -188,7 +196,7 @@ export default function Profile() {
         )}
 
         {/* Settings List */}
-        <section className="bg-white rounded-[2rem] overflow-hidden shadow-sm border border-gray-100">
+        <section className="bg-surface rounded-[2rem] overflow-hidden shadow-sm border border-surface/10">
           <SettingRow 
             icon={<Moon size={22} />} 
             label="Dark Mode" 
@@ -211,15 +219,15 @@ export default function Profile() {
           )}
           <div 
             onClick={handlePasswordClick}
-            className="flex items-center justify-between p-6 hover:bg-gray-50 transition-colors cursor-pointer group"
+            className="flex items-center justify-between p-6 hover:bg-surface/50 transition-colors cursor-pointer group"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-slate-600 group-hover:text-primary transition-colors">
+              <div className="w-12 h-12 rounded-2xl bg-background flex items-center justify-center text-text-muted group-hover:text-primary transition-colors">
                 <Key size={22} />
               </div>
               <div>
                 <span className="font-semibold text-[17px] block">Password</span>
-                <span className="text-slate-400 font-mono tracking-widest text-sm">••••••••</span>
+                <span className="text-text-muted font-mono tracking-widest text-sm">••••••••</span>
               </div>
             </div>
           </div>
@@ -228,7 +236,7 @@ export default function Profile() {
         {/* Logout Button */}
         <button 
           onClick={signOut}
-          className="w-full py-5 bg-white border-2 border-danger/10 text-danger font-bold rounded-[2rem] flex items-center justify-center gap-3 hover:bg-danger/5 transition-all active:scale-[0.98] shadow-sm"
+          className="w-full py-5 bg-surface border-2 border-danger/10 text-danger font-bold rounded-[2rem] flex items-center justify-center gap-3 hover:bg-danger/5 transition-all active:scale-[0.98] shadow-sm"
         >
           <LogOut size={22} />
           Log Out
@@ -254,16 +262,16 @@ export default function Profile() {
 
 function SettingRow({ icon, label, value, onToggle }: any) {
   return (
-    <div className="flex items-center justify-between p-6 hover:bg-gray-50 transition-colors group border-b border-gray-50 last:border-0">
+    <div className="flex items-center justify-between p-6 hover:bg-surface/50 transition-colors group border-b border-surface/5 last:border-0">
       <div className="flex items-center gap-4">
-        <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-slate-600 group-hover:text-primary transition-colors">
+        <div className="w-12 h-12 rounded-2xl bg-background flex items-center justify-center text-text-muted group-hover:text-primary transition-colors">
           {icon}
         </div>
         <span className="font-semibold text-[17px]">{label}</span>
       </div>
       <button 
         onClick={onToggle}
-        className={`w-14 h-8 rounded-full relative transition-all duration-300 ${value ? 'bg-primary' : 'bg-gray-200'}`}
+        className={`w-14 h-8 rounded-full relative transition-all duration-300 ${value ? 'bg-primary' : 'bg-surface/20'}`}
       >
         <motion.div 
           animate={{ x: value ? 28 : 4 }}

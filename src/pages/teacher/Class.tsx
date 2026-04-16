@@ -128,7 +128,7 @@ export default function Class() {
   );
 
   return (
-    <div className="p-6 space-y-8 pb-32">
+    <div className="p-6 space-y-8 pb-32 transition-colors duration-300">
       <TopBar 
         title="Class Metrics"
         subtitle="Comprehensive Student Analytics"
@@ -143,7 +143,7 @@ export default function Class() {
             placeholder="Search students..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-12 pr-4 py-4 bg-white border border-gray-100 rounded-3xl shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium"
+            className="w-full pl-12 pr-4 py-4 bg-surface border border-surface/10 rounded-3xl shadow-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium text-text-primary"
           />
         </div>
         <div className="flex gap-2">
@@ -154,7 +154,7 @@ export default function Class() {
               className={`px-6 py-4 rounded-3xl font-bold text-xs uppercase tracking-widest transition-all border ${
                 sortBy === type 
                   ? 'bg-primary text-white border-primary shadow-lg shadow-primary/20' 
-                  : 'bg-white text-text-muted border-gray-100 hover:border-primary/30'
+                  : 'bg-surface text-text-muted border-surface/10 hover:border-primary/30'
               }`}
             >
               {type}
@@ -182,12 +182,12 @@ export default function Class() {
             >
               <div className="relative cursor-pointer group">
                 <div className={`rounded-full overflow-hidden border-4 shadow-lg transition-transform group-hover:scale-110 ${
-                  isFirst ? 'w-20 h-20 border-warning' : 'w-16 h-16 border-white'
+                  isFirst ? 'w-20 h-20 border-warning' : 'w-16 h-16 border-surface'
                 }`}>
                   {s.profile_photo_url ? (
                     <img src={s.profile_photo_url} alt="PFP" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gray-100 text-text-muted font-bold text-xl">
+                    <div className="w-full h-full flex items-center justify-center bg-background text-text-muted font-bold text-xl">
                       {s.full_name[0]}
                     </div>
                   )}
@@ -204,7 +204,7 @@ export default function Class() {
                 </div>
               </div>
               <div className="text-center">
-                <p className={`font-bold text-xs truncate max-w-[80px] ${isFirst ? 'text-sm' : ''}`}>
+                <p className={`font-bold text-xs truncate max-w-[80px] text-text-primary ${isFirst ? 'text-sm' : ''}`}>
                   {s.full_name.split(' ')[0]}
                 </p>
                 <p className="text-[10px] text-text-muted font-bold">
@@ -212,7 +212,7 @@ export default function Class() {
                 </p>
               </div>
               <div className={`w-full rounded-t-2xl shadow-inner ${
-                isFirst ? 'h-20 bg-warning/20' : isSecond ? 'h-14 bg-gray-100' : 'h-10 bg-amber-700/10'
+                isFirst ? 'h-20 bg-warning/20' : isSecond ? 'h-14 bg-surface' : 'h-10 bg-amber-700/10'
               }`} />
             </motion.div>
           );
@@ -225,14 +225,14 @@ export default function Class() {
           const isTop3 = i < 3;
           const rankColor = i === 0 ? 'bg-warning/10 border-warning/30' : 
                             i === 1 ? 'bg-slate-200/50 border-slate-300/30' : 
-                            i === 2 ? 'bg-amber-700/10 border-amber-700/30' : 'bg-white border-gray-100';
+                            i === 2 ? 'bg-amber-700/10 border-amber-700/30' : 'bg-surface border-surface/10';
           
           return (
             <button 
               key={s.id} 
               onClick={() => setSelectedStudent(s)}
               className={`w-full p-4 rounded-card shadow-sm border flex items-center gap-4 transition-all hover:scale-[1.01] text-left ${
-                isTop3 ? `${rankColor} border-l-4` : 'bg-white border-gray-100'
+                isTop3 ? `${rankColor} border-l-4` : 'bg-surface border-surface/10'
               }`}
             >
               <span className={`w-6 text-sm font-bold ${
@@ -240,7 +240,7 @@ export default function Class() {
                 i === 1 ? 'text-slate-500' : 
                 i === 2 ? 'text-amber-800' : 'text-text-muted'
               }`}>{i + 1}</span>
-              <div className="w-10 h-10 rounded-full bg-gray-100 overflow-hidden">
+              <div className="w-10 h-10 rounded-full bg-background overflow-hidden">
                 {s.profile_photo_url ? (
                   <img src={s.profile_photo_url} alt="PFP" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                 ) : (
@@ -250,7 +250,7 @@ export default function Class() {
                 )}
               </div>
               <div className="flex-1">
-                <p className="font-bold text-sm">{s.full_name}</p>
+                <p className="font-bold text-sm text-text-primary">{s.full_name}</p>
                 <div className="flex items-center gap-3 mt-1">
                   <div className="flex items-center gap-1 text-[10px] font-bold text-text-muted uppercase tracking-wider">
                     <Target size={10} /> {s.overall.accuracy.toFixed(2)}%
@@ -268,7 +268,7 @@ export default function Class() {
                   {sortBy === 'xp' ? (s.stats?.current_league || 'Bronze') : sortBy === 'accuracy' ? 'Accuracy' : 'Avg Score'}
                 </p>
               </div>
-              <ChevronRight size={16} className="text-gray-300" />
+              <ChevronRight size={16} className="text-text-muted" />
             </button>
           );
         })}
@@ -289,7 +289,7 @@ export default function Class() {
               initial={{ opacity: 0, scale: 0.9, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              className="relative w-full max-w-2xl bg-white rounded-[40px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+              className="relative w-full max-w-2xl bg-surface rounded-[40px] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
             >
               {/* Header */}
               <div className="p-8 bg-primary text-white relative">
@@ -317,23 +317,23 @@ export default function Class() {
               </div>
 
               {/* Overall Stats */}
-              <div className="p-8 grid grid-cols-4 gap-4 bg-gray-50/50 border-b border-gray-100">
-                <div className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm text-center">
+              <div className="p-8 grid grid-cols-4 gap-4 bg-background border-b border-surface/10">
+                <div className="bg-surface p-4 rounded-3xl border border-surface/10 shadow-sm text-center">
                   <TrendingUp size={20} className="mx-auto mb-2 text-primary" />
                   <p className="text-xl font-bold text-text-primary">{selectedStudent.overall.xp}</p>
                   <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Total XP</p>
                 </div>
-                <div className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm text-center">
+                <div className="bg-surface p-4 rounded-3xl border border-surface/10 shadow-sm text-center">
                   <Target size={20} className="mx-auto mb-2 text-danger" />
                   <p className="text-xl font-bold text-text-primary">{selectedStudent.overall.accuracy.toFixed(2)}%</p>
                   <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Accuracy</p>
                 </div>
-                <div className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm text-center">
+                <div className="bg-surface p-4 rounded-3xl border border-surface/10 shadow-sm text-center">
                   <Award size={20} className="mx-auto mb-2 text-success" />
                   <p className="text-xl font-bold text-text-primary">{selectedStudent.overall.avgScore.toFixed(2)}%</p>
                   <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Avg Score</p>
                 </div>
-                <div className="bg-white p-4 rounded-3xl border border-gray-100 shadow-sm text-center">
+                <div className="bg-surface p-4 rounded-3xl border border-surface/10 shadow-sm text-center">
                   <Clock size={20} className="mx-auto mb-2 text-warning" />
                   <p className="text-xl font-bold text-text-primary">
                     {Math.floor(selectedStudent.overall.avgTime / 60)}:{(selectedStudent.overall.avgTime % 60).toString().padStart(2, '0')}
@@ -350,7 +350,7 @@ export default function Class() {
                   </h3>
                   <div className="grid gap-4">
                     {selectedStudent.subjectBreakdown.map((subject: any) => (
-                      <div key={subject.name} className="p-6 bg-white rounded-[32px] border border-gray-100 shadow-sm space-y-4">
+                      <div key={subject.name} className="p-6 bg-surface rounded-[32px] border border-surface/10 shadow-sm space-y-4">
                         <div className="flex items-center justify-between">
                           <h4 className="font-bold text-lg text-text-primary">{subject.name}</h4>
                           <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-[10px] font-bold uppercase tracking-widest">
@@ -361,7 +361,7 @@ export default function Class() {
                           <div className="space-y-1">
                             <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest">Score</p>
                             <p className="text-lg font-bold text-primary">{subject.avgScore.toFixed(2)}%</p>
-                            <div className="w-full h-1 bg-gray-100 rounded-full overflow-hidden">
+                            <div className="w-full h-1 bg-background rounded-full overflow-hidden">
                               <div className="h-full bg-primary" style={{ width: `${subject.avgScore}%` }} />
                             </div>
                           </div>
@@ -396,7 +396,7 @@ export default function Class() {
                       </div>
                     ))}
                     {selectedStudent.subjectBreakdown.length === 0 && (
-                      <div className="text-center py-12 text-text-muted border-2 border-dashed border-gray-100 rounded-[40px]">
+                      <div className="text-center py-12 text-text-muted border-2 border-dashed border-surface/10 rounded-[40px]">
                         <Activity size={48} className="mx-auto mb-4 opacity-20" />
                         <p className="text-sm font-bold uppercase tracking-widest">No subject data available yet</p>
                       </div>

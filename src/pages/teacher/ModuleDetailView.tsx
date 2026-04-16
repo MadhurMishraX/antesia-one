@@ -70,19 +70,19 @@ export default function ModuleDetailView() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-24 transition-colors duration-300">
       {/* Top Bar */}
-      <div className="p-6 flex items-center justify-between bg-white/80 backdrop-blur-xl border-b border-gray-100 sticky top-0 z-30">
+      <div className="p-6 flex items-center justify-between bg-surface/80 backdrop-blur-xl border-b border-surface/10 sticky top-0 z-30">
         <div className="flex items-center gap-4">
-          <button onClick={() => navigate(-1)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
-            <ArrowLeft size={24} />
+          <button onClick={() => navigate(-1)} className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-background transition-colors">
+            <ArrowLeft size={24} className="text-text-primary" />
           </button>
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-xl ${subjectStyle.lightColor} flex items-center justify-center ${subjectStyle.textColor}`}>
               <SubjectIcon size={20} />
             </div>
             <div>
-              <h2 className="text-lg font-bold truncate max-w-[200px]">{module.module_name}</h2>
+              <h2 className="text-lg font-bold truncate max-w-[200px] text-text-primary">{module.module_name}</h2>
               <p className={`text-[10px] font-bold ${subjectStyle.textColor} uppercase tracking-widest`}>{module.subject}</p>
             </div>
           </div>
@@ -91,7 +91,7 @@ export default function ModuleDetailView() {
 
       <div className="p-6 space-y-8">
         {/* Info Block */}
-        <div className="bg-white rounded-[32px] shadow-sm border border-gray-100 p-8 space-y-8">
+        <div className="bg-surface rounded-[32px] shadow-sm border border-surface/10 p-8 space-y-8">
           <div className="grid grid-cols-2 gap-8">
             <InfoItem icon={<Calendar size={20} className="text-primary" />} label="Due Date" value={new Date(module.due_date).toLocaleDateString()} />
             <InfoItem 
@@ -104,7 +104,7 @@ export default function ModuleDetailView() {
           </div>
           <div 
             onClick={() => navigate(`/teacher/auditor/${id}/submissions`)}
-            className="pt-6 border-t border-gray-50 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors rounded-b-[32px] -mx-8 px-8"
+            className="pt-6 border-t border-surface/5 flex items-center justify-between cursor-pointer hover:bg-background transition-colors rounded-b-[32px] -mx-8 px-8"
           >
             <div className="flex items-center gap-2">
               <CheckCircle2 size={18} className="text-success" />
@@ -125,16 +125,16 @@ export default function ModuleDetailView() {
               <motion.div 
                 key={q.id}
                 layout
-                className="bg-white rounded-[24px] shadow-sm border border-gray-100 overflow-hidden group"
+                className="bg-surface rounded-[24px] shadow-sm border border-surface/10 overflow-hidden group"
               >
                 <div 
                   onClick={() => setExpandedId(expandedId === q.id ? null : q.id)}
-                  className="p-5 flex items-center gap-4 cursor-pointer active:bg-gray-50 transition-colors"
+                  className="p-5 flex items-center gap-4 cursor-pointer active:bg-background transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-[12px] bg-gray-50 flex items-center justify-center font-bold text-sm text-text-muted group-hover:bg-primary/5 group-hover:text-primary transition-colors">
+                  <div className="w-10 h-10 rounded-[12px] bg-background flex items-center justify-center font-bold text-sm text-text-muted group-hover:bg-primary/5 group-hover:text-primary transition-colors">
                     Q{i + 1}
                   </div>
-                  <p className="flex-1 text-sm font-medium truncate">
+                  <p className="flex-1 text-sm font-medium truncate text-text-primary">
                     {q.question_text}
                   </p>
                   <div className="flex items-center gap-3">
@@ -151,7 +151,7 @@ export default function ModuleDetailView() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-gray-50 p-6 space-y-6"
+                      className="border-t border-surface/5 p-6 space-y-6"
                     >
                       <div className="text-sm leading-relaxed font-medium text-text-primary">
                         {renderTextWithMath(q.question_text)}
@@ -161,7 +161,7 @@ export default function ModuleDetailView() {
                         <div className="space-y-2">
                           {q.options?.map((opt: any) => (
                             <div key={opt.option_id} className={`p-4 rounded-[16px] border-2 text-sm font-bold flex items-center justify-between transition-all ${
-                              opt.is_correct ? 'bg-success/5 border-success text-success' : 'bg-gray-50 border-transparent text-text-primary'
+                              opt.is_correct ? 'bg-success/5 border-success text-success' : 'bg-background border-transparent text-text-primary'
                             }`}>
                               {opt.option_text}
                               {opt.is_correct && <CheckCircle2 size={18} />}
@@ -177,7 +177,7 @@ export default function ModuleDetailView() {
                         </div>
                       )}
 
-                      <div className="bg-gray-50 p-5 rounded-[20px] border border-gray-100">
+                      <div className="bg-background p-5 rounded-[20px] border border-surface/10">
                         <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-2">Explanation</p>
                         <p className="text-xs italic leading-relaxed text-text-muted">
                           {q.explanation || 'No explanation provided.'}
@@ -202,7 +202,7 @@ function InfoItem({ icon, label, value }: any) {
         {icon}
         <span className="text-[10px] font-bold uppercase tracking-widest">{label}</span>
       </div>
-      <div className="text-sm font-bold pl-6">{value}</div>
+      <div className="text-sm font-bold pl-6 text-text-primary">{value}</div>
     </div>
   );
 }

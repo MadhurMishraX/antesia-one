@@ -86,14 +86,14 @@ export default function Notifications() {
   const unreadCount = notifications.filter(n => !n.is_read).length;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background transition-colors duration-300">
       {/* Top Bar */}
-      <div className="p-6 flex items-center justify-between bg-white shadow-sm sticky top-0 z-30">
+      <div className="p-6 flex items-center justify-between bg-surface shadow-sm sticky top-0 z-30 border-b border-surface/10">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate(-1)} className="p-2 -ml-2 text-text-muted hover:text-primary transition-colors">
             <ArrowLeft size={24} />
           </button>
-          <h2 className="text-lg font-bold">Notifications</h2>
+          <h2 className="text-lg font-bold text-text-primary">Notifications</h2>
         </div>
         {unreadCount > 0 && (
           <button 
@@ -116,16 +116,16 @@ export default function Notifications() {
               key={n.id}
               onClick={() => handleNotificationClick(n)}
               className={`p-4 rounded-card border transition-all cursor-pointer active:scale-[0.98] flex items-center gap-4 ${
-                n.is_read ? 'bg-white border-gray-100 opacity-70' : 'bg-white border-primary/20 shadow-sm'
+                n.is_read ? 'bg-surface border-surface/10 opacity-70' : 'bg-surface border-primary/20 shadow-sm'
               }`}
             >
               <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                n.is_read ? 'bg-gray-50' : 'bg-primary/5'
+                n.is_read ? 'bg-background' : 'bg-primary/10'
               }`}>
                 {getIcon(n.type)}
               </div>
               <div className="flex-1 min-w-0">
-                <h4 className="font-bold text-sm truncate">{n.title}</h4>
+                <h4 className="font-bold text-sm truncate text-text-primary">{n.title}</h4>
                 <p className="text-xs text-text-muted line-clamp-1">{n.body}</p>
                 <p className="text-[8px] font-bold text-text-muted uppercase tracking-widest mt-1">
                   {new Date(n.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
@@ -137,7 +137,7 @@ export default function Notifications() {
           ))
         ) : (
           <div className="py-12 text-center space-y-2">
-            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto text-text-muted">
+            <div className="w-12 h-12 bg-surface rounded-full flex items-center justify-center mx-auto text-text-muted">
               <Bell size={24} />
             </div>
             <p className="text-text-muted text-sm font-medium">All caught up!</p>

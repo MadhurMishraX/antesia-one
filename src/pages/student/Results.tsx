@@ -72,9 +72,9 @@ export default function Results() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-24">
+    <div className="min-h-screen bg-background pb-24 transition-colors duration-300">
       {/* Top Bar */}
-      <div className="p-6 flex items-center gap-4 bg-white shadow-sm sticky top-0 z-30">
+      <div className="p-6 flex items-center gap-4 bg-surface shadow-sm sticky top-0 z-30 border-b border-surface/10">
         <button onClick={() => navigate('/learn')} className="p-2 -ml-2 text-text-muted hover:text-primary transition-colors">
           <ArrowLeft size={24} />
         </button>
@@ -83,9 +83,9 @@ export default function Results() {
 
       <div className="p-6 space-y-8">
         {/* Score Hero Block */}
-        <div className="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 text-center space-y-6">
+        <div className="bg-surface rounded-[32px] p-8 shadow-sm border border-surface/10 text-center space-y-6">
           <div className="space-y-1">
-            <h1 className="text-5xl font-bold tracking-tight">
+            <h1 className="text-5xl font-bold tracking-tight text-text-primary">
               {submission.score ?? 0} / {submission.total_questions}
             </h1>
             <p className="text-text-muted font-bold uppercase tracking-widest text-[10px]">Total Score</p>
@@ -94,7 +94,7 @@ export default function Results() {
           <div className="flex items-center justify-around">
             <StatItem icon={<CheckCircle2 size={18} className="text-success" />} value={correctCount} label="Correct" />
             <StatItem icon={<XCircle size={18} className="text-danger" />} value={wrongCount} label="Wrong" />
-            <StatItem icon={<MinusCircle size={18} className="text-gray-400" />} value={skippedCount} label="Skipped" />
+            <StatItem icon={<MinusCircle size={18} className="text-text-muted" />} value={skippedCount} label="Skipped" />
             {pendingCount > 0 && (
               <StatItem icon={<HelpCircle size={18} className="text-warning" />} value={pendingCount} label="Pending" />
             )}
@@ -103,7 +103,7 @@ export default function Results() {
           {/* Semicircle Chart Placeholder */}
             <div className="relative w-48 h-24 mx-auto overflow-hidden">
               <svg className="w-full h-full" viewBox="0 0 100 50">
-                <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#F5F5F7" strokeWidth="10" />
+                <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="currentColor" className="text-surface/20" strokeWidth="10" />
                 <path 
                   d="M 10 50 A 40 40 0 0 1 90 50" 
                   fill="none" 
@@ -113,7 +113,7 @@ export default function Results() {
                 />
               </svg>
               <div className="absolute bottom-0 left-0 right-0 flex flex-col items-center">
-                <span className="text-xl font-bold">{Math.round(((submission.score ?? 0) / submission.total_questions) * 100)}%</span>
+                <span className="text-xl font-bold text-text-primary">{Math.round(((submission.score ?? 0) / submission.total_questions) * 100)}%</span>
               </div>
             </div>
 
@@ -130,19 +130,19 @@ export default function Results() {
               <motion.div 
                 key={q.id}
                 layout
-                className="bg-white rounded-card shadow-sm border border-gray-100 overflow-hidden"
+                className="bg-surface rounded-card shadow-sm border border-surface/10 overflow-hidden"
               >
                 <div 
                   onClick={() => setExpandedId(expandedId === q.id ? null : q.id)}
-                  className="p-4 flex items-center gap-4 cursor-pointer active:bg-gray-50 transition-colors"
+                  className="p-4 flex items-center gap-4 cursor-pointer active:bg-surface/50 transition-colors"
                 >
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${
                     q.studentAns?.is_correct ? 'bg-success/10 text-success' : 
-                    q.studentAns?.student_answer ? 'bg-danger/10 text-danger' : 'bg-gray-100 text-text-muted'
+                    q.studentAns?.student_answer ? 'bg-danger/10 text-danger' : 'bg-background text-text-muted'
                   }`}>
                     {i + 1}
                   </div>
-                  <p className="flex-1 text-sm font-medium truncate">
+                  <p className="flex-1 text-sm font-medium truncate text-text-primary">
                     {renderTextWithMath(q.question_text)}
                   </p>
                   <ChevronDown size={18} className={`text-text-muted transition-transform ${expandedId === q.id ? 'rotate-180' : ''}`} />
@@ -154,9 +154,9 @@ export default function Results() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: 'auto', opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-gray-50 p-4 space-y-6"
+                      className="border-t border-surface/10 p-4 space-y-6"
                     >
-                      <div className="text-sm leading-relaxed font-medium">
+                      <div className="text-sm leading-relaxed font-medium text-text-primary">
                         {renderTextWithMath(q.question_text)}
                       </div>
 
@@ -166,7 +166,7 @@ export default function Results() {
                             const isCorrect = opt.is_correct;
                             const isSelected = q.studentAns?.student_answer === opt.option_id;
                             
-                            let bgColor = 'bg-gray-50';
+                            let bgColor = 'bg-background';
                             let borderColor = 'border-transparent';
                             let textColor = 'text-text-primary';
 
@@ -221,7 +221,7 @@ export default function Results() {
                         </div>
                       )}
 
-                      <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="bg-background p-4 rounded-lg">
                         <p className="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1">Explanation</p>
                         <p className="text-xs italic leading-relaxed text-text-muted">
                           {q.explanation ? renderTextWithMath(q.explanation) : 'No explanation provided.'}
