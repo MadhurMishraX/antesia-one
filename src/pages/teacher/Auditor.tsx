@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
-import { motion } from 'motion/react';
-import { Search, Plus, ChevronRight, ClipboardList } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Search, Plus, ChevronRight, ClipboardList, Trash2, X, AlertTriangle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { getSubjectStyle } from '../../lib/constants';
@@ -12,26 +12,56 @@ export default function Auditor() {
   const [modules, setModules] = useState<any[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
-    async function fetchModules() {
-      if (!profile) return;
-
-      const { data } = await supabase
-        .from('modules')
-        .select(`
-          *,
-          assignment_submissions(count)
-        `)
-        .eq('created_by', profile.id)
-        .order('created_at', { ascending: false });
-
-      setModules(data || []);
-      setLoading(false);
-    }
-
     fetchModules();
   }, [profile]);
+
+  async function fetchModules() {
+    if (!profile) return;
+
+    const { data } = await supabase
+      .from('modules')
+      .select(`
+        *,
+        assignment_submissions(count)
+      `)
+      .eq('created_by', profile.id)
+      .order('created_at', { ascending: false });
+
+    setModules(data || []);
+    setLoading(false);
+  }
+
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDeletingId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingId) return;
+    setDeleteLoading(true);
+
+    try {
+      const { error } = await supabase
+        .from('modules')
+        .delete()
+        .eq('id', deletingId);
+
+      if (error) throw error;
+      
+      setModules(modules.filter(m => m.id !== deletingId));
+      setDeletingId(null);
+    } catch (error) {
+      console.error('Error deleting module:', error);
+      alert('Failed to delete module. Please check your network or permissions.');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   const filteredModules = modules.filter(m => 
     m.module_name.toLowerCase().includes(search.toLowerCase()) ||
@@ -106,6 +136,12 @@ export default function Auditor() {
                     <p className="text-[10px] font-bold text-primary">
                       {module.assignment_submissions?.[0]?.count || 0} Submissions
                     </p>
+                    <button
+                      onClick={(e) => handleDelete(e, module.id)}
+                      className="p-1.5 text-text-muted hover:text-danger hover:bg-danger/5 rounded-lg transition-all"
+                    >
+                      <Trash2 size={16} />
+                    </button>
                   </div>
                 </div>
               </Link>
@@ -123,6 +159,49 @@ export default function Auditor() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {deletingId && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-surface w-full max-w-sm rounded-[32px] p-8 shadow-2xl space-y-6 border border-surface/10"
+            >
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className="w-16 h-16 bg-danger/10 rounded-full flex items-center justify-center text-danger">
+                  <AlertTriangle size={32} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-text-primary">Delete Module?</h3>
+                  <p className="text-sm text-text-muted mt-2">
+                    This action is <span className="text-danger font-bold">irreversible</span>. It will permanently remove all questions, student scores, and records associated with this module.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={confirmDelete}
+                  disabled={deleteLoading}
+                  className="w-full py-4 bg-danger text-white font-bold rounded-2xl shadow-lg shadow-danger/20 active:scale-95 transition-all disabled:opacity-50"
+                >
+                  {deleteLoading ? 'Deleting...' : 'Yes, Delete Completely'}
+                </button>
+                <button
+                  onClick={() => setDeletingId(null)}
+                  disabled={deleteLoading}
+                  className="w-full py-4 bg-surface border border-surface/10 text-text-primary font-bold rounded-2xl hover:bg-background transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

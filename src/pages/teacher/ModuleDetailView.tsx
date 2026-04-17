@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { motion, AnimatePresence } from 'motion/react';
-import { ArrowLeft, Edit2, Calendar, Flag, Zap, HelpCircle, ChevronDown, CheckCircle2, XCircle, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Edit2, Calendar, Flag, Zap, HelpCircle, ChevronDown, CheckCircle2, XCircle, ChevronRight, Trash2, AlertTriangle } from 'lucide-react';
 import 'katex/dist/katex.min.css';
 import { InlineMath } from 'react-katex';
 
@@ -15,6 +15,8 @@ export default function ModuleDetailView() {
   const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     async function fetchModule() {
@@ -45,6 +47,24 @@ export default function ModuleDetailView() {
 
     fetchModule();
   }, [id, navigate]);
+
+  const handleDelete = async () => {
+    setDeleteLoading(true);
+    try {
+      const { error } = await supabase
+        .from('modules')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      navigate('/teacher/auditor');
+    } catch (error) {
+      console.error('Error deleting module:', error);
+      alert('Failed to delete module.');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
 
   if (loading) return null;
 
@@ -87,6 +107,12 @@ export default function ModuleDetailView() {
             </div>
           </div>
         </div>
+        <button 
+          onClick={() => setShowDeleteModal(true)}
+          className="p-2 text-text-muted hover:text-danger hover:bg-danger/5 rounded-xl transition-all"
+        >
+          <Trash2 size={22} />
+        </button>
       </div>
 
       <div className="p-6 space-y-8">
@@ -191,6 +217,49 @@ export default function ModuleDetailView() {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <AnimatePresence>
+        {showDeleteModal && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-6 text-left">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="bg-surface w-full max-w-sm rounded-[32px] p-8 shadow-2xl space-y-6 border border-surface/10"
+            >
+              <div className="flex flex-col items-center text-center space-y-4">
+                <div className="w-16 h-16 bg-danger/10 rounded-full flex items-center justify-center text-danger">
+                  <AlertTriangle size={32} />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-text-primary">Delete Module?</h3>
+                  <p className="text-sm text-text-muted mt-2">
+                    This action is <span className="text-danger font-bold">irreversible</span>. It will permanently remove all questions, student scores, and records associated with this module.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={handleDelete}
+                  disabled={deleteLoading}
+                  className="w-full py-4 bg-danger text-white font-bold rounded-2xl shadow-lg shadow-danger/20 active:scale-95 transition-all disabled:opacity-50"
+                >
+                  {deleteLoading ? 'Deleting...' : 'Yes, Delete Completely'}
+                </button>
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  disabled={deleteLoading}
+                  className="w-full py-4 bg-surface border border-surface/10 text-text-primary font-bold rounded-2xl hover:bg-background transition-all"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
