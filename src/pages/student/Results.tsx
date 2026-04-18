@@ -96,7 +96,7 @@ export default function Results() {
             <StatItem icon={<XCircle size={18} className="text-danger" />} value={wrongCount} label="Wrong" />
             <StatItem icon={<MinusCircle size={18} className="text-text-muted" />} value={skippedCount} label="Skipped" />
             {pendingCount > 0 && (
-              <StatItem icon={<HelpCircle size={18} className="text-warning" />} value={pendingCount} label="Pending" />
+              <StatItem icon={<HelpCircle size={18} className="text-warning" />} value={pendingCount} label="Review Pool" />
             )}
           </div>
 
@@ -137,14 +137,23 @@ export default function Results() {
                   className="p-4 flex items-center gap-4 cursor-pointer active:bg-surface/50 transition-colors"
                 >
                   <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs ${
-                    q.studentAns?.is_correct ? 'bg-success/10 text-success' : 
-                    q.studentAns?.student_answer ? 'bg-danger/10 text-danger' : 'bg-background text-text-muted'
+                    q.studentAns?.is_correct === true ? 'bg-success/10 text-success' : 
+                    q.studentAns?.is_correct === false ? 'bg-danger/10 text-danger' : 
+                    q.studentAns?.student_answer ? 'bg-warning/10 text-warning' : 
+                    'bg-background text-text-muted'
                   }`}>
                     {i + 1}
                   </div>
-                  <p className="flex-1 text-sm font-medium truncate text-text-primary">
-                    {renderTextWithMath(q.question_text)}
-                  </p>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate text-text-primary">
+                      {renderTextWithMath(q.question_text)}
+                    </p>
+                    {q.studentAns?.is_correct === null && q.studentAns?.student_answer && (
+                      <p className="text-[9px] font-black text-warning uppercase tracking-widest mt-0.5">
+                        (Waiting for teacher review)
+                      </p>
+                    )}
+                  </div>
                   <ChevronDown size={18} className={`text-text-muted transition-transform ${expandedId === q.id ? 'rotate-180' : ''}`} />
                 </div>
 
@@ -200,13 +209,13 @@ export default function Results() {
                             }`}>
                               {q.studentAns?.student_answer || '(Skipped)'}
                               {!q.studentAns?.approval_status && q.studentAns?.student_answer && (
-                                <span className="ml-2 text-[10px] font-bold uppercase tracking-widest">(Pending Review)</span>
+                                <span className="ml-2 text-[10px] font-bold uppercase tracking-widest">(Waiting for teacher review)</span>
                               )}
                               {q.studentAns?.approval_status === 'approved' && (
-                                <span className="ml-2 text-[10px] font-bold uppercase tracking-widest">(Approved)</span>
+                                <span className="ml-2 text-[10px] font-bold uppercase tracking-widest">(Correct)</span>
                               )}
                               {q.studentAns?.approval_status === 'rejected' && (
-                                <span className="ml-2 text-[10px] font-bold uppercase tracking-widest">(Rejected)</span>
+                                <span className="ml-2 text-[10px] font-bold uppercase tracking-widest">(Incorrect)</span>
                               )}
                             </div>
                           </div>
