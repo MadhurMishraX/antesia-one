@@ -41,6 +41,7 @@ export default function ModuleSubmissions() {
         .from('assignment_submissions')
         .select('*, profiles(full_name, login_id)')
         .eq('module_id', id)
+        .eq('status', 'submitted')
         .order('submitted_at', { ascending: false });
       
       // 4. For each submission, fetch answers
