@@ -343,7 +343,7 @@ export default function ModuleSubmissions() {
                     </div>
                     {ans?.is_correct === true && <CheckCircle2 size={20} className="text-success" />}
                     {ans?.is_correct === false && <XCircle size={20} className="text-danger" />}
-                    {isPending && <span className="text-[8px] font-bold bg-warning/10 text-warning px-2 py-0.5 rounded-pill uppercase">Pending Approval</span>}
+                    {isPending && <span className="text-[8px] font-bold bg-warning/10 text-warning px-2 py-0.5 rounded-pill uppercase">Pending Review</span>}
                   </div>
                   
                   <div className="p-6 space-y-4">
@@ -366,23 +366,27 @@ export default function ModuleSubmissions() {
                       </div>
                     </div>
 
-                    {q.question_type === 'text_answer' && isPending && (
+                    {q.question_type === 'text_answer' && ans?.student_answer && (
                       <div className="flex gap-3 pt-2">
                         <button 
                           onClick={() => handleApprove(ans.id, true)}
                           disabled={approving}
-                          className="flex-1 py-3 bg-success text-white font-bold rounded-button shadow-lg shadow-success/20 flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
+                          className={`flex-1 py-3 text-white font-bold rounded-button shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50 ${
+                            ans?.is_correct === true ? 'bg-success ring-4 ring-success/30 ring-offset-1' : 'bg-success/80 hover:bg-success'
+                          }`}
                         >
                           <CheckCircle2 size={18} />
-                          Approve
+                          Correct
                         </button>
                         <button 
                           onClick={() => handleApprove(ans.id, false)}
                           disabled={approving}
-                          className="flex-1 py-3 bg-danger text-white font-bold rounded-button shadow-lg shadow-danger/20 flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50"
+                          className={`flex-1 py-3 text-white font-bold rounded-button shadow-lg flex items-center justify-center gap-2 active:scale-95 transition-all disabled:opacity-50 ${
+                            ans?.is_correct === false ? 'bg-danger ring-4 ring-danger/30 ring-offset-1' : 'bg-danger/80 hover:bg-danger'
+                          }`}
                         >
                           <XCircle size={18} />
-                          Reject
+                          Incorrect
                         </button>
                       </div>
                     )}
