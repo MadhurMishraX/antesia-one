@@ -20,6 +20,13 @@ export default function AdminLogin() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  // Initialize device fingerprint immediately
+  useEffect(() => {
+    if (!localStorage.getItem('ants_dev_sig')) {
+      localStorage.setItem('ants_dev_sig', crypto.randomUUID());
+    }
+  }, []);
+
   // Sync step with auth state
   useEffect(() => {
     if (authLoading) return;
@@ -66,7 +73,21 @@ export default function AdminLogin() {
         password,
       });
 
-      if (authError) throw authError;
+      // Get fingerprint
+      const fingerprint = localStorage.getItem('ants_dev_sig') || 'unknown';
+
+      const logAttempt = async (status: 'success' | 'fail') => {
+        await supabase.from('admin_security_logs').insert({
+          fingerprint,
+          user_agent: navigator.userAgent,
+          status
+        });
+      };
+
+      if (authError) {
+        await logAttempt('fail');
+        throw authError;
+      }
 
       // Check role immediately
       const { data: profile, error: profileError } = await supabase
@@ -77,10 +98,12 @@ export default function AdminLogin() {
 
       if (profileError || profile?.role !== 'admin') {
         await supabase.auth.signOut();
+        await logAttempt('fail');
         throw new Error('Unauthorized: Admin access only');
       }
 
       // Success phase 1
+      await logAttempt('success');
       setStep('pin');
     } catch (err: any) {
       setError(err.message);
@@ -97,6 +120,15 @@ export default function AdminLogin() {
     if (pin === ADMIN_PIN) {
       // Success phase 2
       sessionStorage.setItem('admin_verified', 'true');
+      
+      // Log successful session verification
+      const fingerprint = localStorage.getItem('ants_dev_sig') || 'unknown';
+      await supabase.from('admin_security_logs').insert({
+        fingerprint,
+        user_agent: navigator.userAgent,
+        status: 'success'
+      });
+      
       navigate('/admin');
     } else {
       // Failure - log out immediately as requested

@@ -24,11 +24,12 @@ import {
   RefreshCw,
   X,
   CheckCircle2,
-  Key
+  Key,
+  ShieldCheck
 } from 'lucide-react';
 
 // --- Types ---
-type AdminSection = 'overview' | 'users' | 'activity' | 'modules' | 'submissions' | 'doubts' | 'broadcasts' | 'notifications' | 'storage';
+type AdminSection = 'overview' | 'users' | 'activity' | 'modules' | 'submissions' | 'doubts' | 'broadcasts' | 'notifications' | 'storage' | 'security';
 
 interface Stats {
   totalUsers: number;
@@ -174,6 +175,9 @@ export default function AdminPanel() {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState<AdminSection>('overview');
   const [loading, setLoading] = useState(true);
+  const [secretCount, setSecretCount] = useState(0);
+  const [secretUnlocked, setSecretUnlocked] = useState(false);
+  const [trustedDevices, setTrustedDevices] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   
@@ -376,6 +380,22 @@ export default function AdminPanel() {
             setTotalCount(0);
             setLoading(false);
             return;
+          case 'security':
+            const { data: logs, count: logCount } = await supabase
+              .from('admin_security_logs')
+              .select('*', { count: 'exact' })
+              .order('created_at', { ascending: false })
+              .range(from, to);
+            
+            const { data: trusted } = await supabase
+              .from('admin_trusted_devices')
+              .select('fingerprint');
+            
+            setTrustedDevices(trusted?.map(t => t.fingerprint) || []);
+            setData(logs || []);
+            setTotalCount(logCount || 0);
+            setLoading(false);
+            return;
         }
 
         const { data: result, count, error: fetchError } = await query
@@ -464,6 +484,89 @@ export default function AdminPanel() {
   };
 
   // --- Render Helpers ---
+
+  const handleTrustDevice = async (fingerprint: string) => {
+    try {
+      const { error } = await supabase
+        .from('admin_trusted_devices')
+        .insert({ fingerprint, label: 'Admin Device' });
+      
+      if (error) throw error;
+      showToast('Device marked as TRUSTED', 'success');
+      fetchData();
+    } catch (err: any) {
+      showToast(err.message, 'error');
+    }
+  };
+
+  const renderSecurityAudit = () => {
+    return (
+      <div className="space-y-6">
+        <div className="bg-white rounded-[32px] shadow-sm border border-gray-100 overflow-hidden">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-gray-50/50 border-b border-gray-100">
+                <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Device / Time</th>
+                <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Browser Info</th>
+                <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</th>
+                <th className="p-6 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">Verification</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {data.map((log) => {
+                const isTrusted = trustedDevices.includes(log.fingerprint);
+                const isCurrent = log.fingerprint === localStorage.getItem('ants_dev_sig');
+                
+                return (
+                  <tr key={log.id} className={`${isTrusted ? 'bg-success/5' : 'bg-white'} hover:bg-gray-50/80 transition-colors`}>
+                    <td className="p-6">
+                      <div className="flex flex-col">
+                        <span className={`text-[10px] font-mono leading-none mb-1 ${isTrusted ? 'text-success' : 'text-slate-400'}`}>
+                          ID: {(log.fingerprint || 'unknown').slice(0, 12)}
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {new Date(log.created_at).toLocaleString()}
+                        </span>
+                        {isCurrent && <span className="text-[8px] font-black text-primary uppercase mt-1">This Browser</span>}
+                      </div>
+                    </td>
+                    <td className="p-6">
+                      <p className="text-[10px] text-slate-500 line-clamp-1 max-w-[200px]" title={log.user_agent}>
+                        {log.user_agent}
+                      </p>
+                    </td>
+                    <td className="p-6">
+                      <span className={`text-[10px] font-bold px-2 py-0.5 rounded-pill uppercase ${
+                        log.status === 'success' ? 'bg-success text-white' : 'bg-danger text-white'
+                      }`}>
+                        {log.status}
+                      </span>
+                    </td>
+                    <td className="p-6 text-right">
+                      {isTrusted ? (
+                        <div className="flex items-center justify-end gap-2 text-success">
+                          <ShieldCheck size={16} />
+                          <span className="text-[10px] font-bold uppercase tracking-widest">Trusted</span>
+                        </div>
+                      ) : (
+                        <button
+                          onClick={() => handleTrustDevice(log.fingerprint)}
+                          className="px-4 py-2 bg-slate-900 text-white text-[10px] font-bold rounded-lg hover:bg-slate-800 transition-all active:scale-95 shadow-lg shadow-slate-900/20"
+                        >
+                          Trust Device
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <Pagination page={page} totalPages={Math.ceil(totalCount / pageSize)} onPageChange={setPage} />
+      </div>
+    );
+  };
 
   const renderOverview = () => {
     if (!stats) return null;
@@ -1155,7 +1258,19 @@ export default function AdminPanel() {
 
         <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
           <NavItem active={activeSection === 'overview'} onClick={() => setActiveSection('overview')} icon={<LayoutDashboard size={20} />} label="Overview" />
-          <div className="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Management</div>
+          <div 
+            onClick={() => {
+              const newCount = secretCount + 1;
+              setSecretCount(newCount);
+              if (newCount === 7) {
+                setSecretUnlocked(true);
+                showToast('🔒 Security Module Unlocked', 'success');
+              }
+            }}
+            className="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest cursor-default select-none transition-colors hover:text-slate-300"
+          >
+            Management
+          </div>
           <NavItem active={activeSection === 'users'} onClick={() => setActiveSection('users')} icon={<Users size={20} />} label="Users" />
           <NavItem active={activeSection === 'activity'} onClick={() => setActiveSection('activity')} icon={<RefreshCw size={20} />} label="Activity" />
           <NavItem active={activeSection === 'modules'} onClick={() => setActiveSection('modules')} icon={<ClipboardList size={20} />} label="Modules" />
@@ -1165,6 +1280,9 @@ export default function AdminPanel() {
           <NavItem active={activeSection === 'notifications'} onClick={() => setActiveSection('notifications')} icon={<Bell size={20} />} label="Notifications" />
           <div className="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">System</div>
           <NavItem active={activeSection === 'storage'} onClick={() => setActiveSection('storage')} icon={<Database size={20} />} label="Storage Cleanup" />
+          {secretUnlocked && (
+            <NavItem active={activeSection === 'security'} onClick={() => setActiveSection('security')} icon={<ShieldCheck size={20} />} label="Security Audit" />
+          )}
         </nav>
 
         <div className="p-6 border-t border-gray-100">
@@ -1240,6 +1358,7 @@ export default function AdminPanel() {
                   {activeSection === 'broadcasts' && renderBroadcasts()}
                   {activeSection === 'notifications' && renderNotifications()}
                   {activeSection === 'storage' && renderStorage()}
+                  {activeSection === 'security' && renderSecurityAudit()}
                 </>
               )}
             </motion.div>
