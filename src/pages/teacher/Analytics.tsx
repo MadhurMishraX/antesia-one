@@ -153,9 +153,24 @@ export default function Analytics() {
   }, [profile]);
 
   const sortedLeaderboard = [...studentLeaderboard].sort((a, b) => {
-    if (leaderboardSortBy === 'xp') return b.xp - a.xp;
-    if (leaderboardSortBy === 'score') return b.avgScore - a.avgScore;
-    if (leaderboardSortBy === 'accuracy') return b.accuracy - a.accuracy;
+    if (leaderboardSortBy === 'xp') {
+      if (b.xp !== a.xp) return b.xp - a.xp;
+      const timeA = new Date(a.stats?.updated_at || 0).getTime();
+      const timeB = new Date(b.stats?.updated_at || 0).getTime();
+      return timeA - timeB;
+    }
+    if (leaderboardSortBy === 'score') {
+      if (b.avgScore !== a.avgScore) return b.avgScore - a.avgScore;
+      const timeA = new Date(a.stats?.updated_at || 0).getTime();
+      const timeB = new Date(b.stats?.updated_at || 0).getTime();
+      return timeA - timeB;
+    }
+    if (leaderboardSortBy === 'accuracy') {
+      if (b.accuracy !== a.accuracy) return b.accuracy - a.accuracy;
+      const timeA = new Date(a.stats?.updated_at || 0).getTime();
+      const timeB = new Date(b.stats?.updated_at || 0).getTime();
+      return timeA - timeB;
+    }
     return 0;
   });
 

@@ -28,11 +28,12 @@ export default function Dashboard() {
       .single();
     setStats(statsData);
 
-    // Calculate rank locally
+    // Calculate rank locally with time-based tie-breaker
     const { data: allStats } = await supabase
       .from('student_stats')
-      .select('student_id, total_xp')
-      .order('total_xp', { ascending: false });
+      .select('student_id, total_xp, updated_at')
+      .order('total_xp', { ascending: false })
+      .order('updated_at', { ascending: true });
     
     if (allStats) {
       const rank = allStats.findIndex(s => s.student_id === profile.id) + 1;

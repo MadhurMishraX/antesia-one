@@ -18,12 +18,13 @@ export default function Leaderboard() {
     async function fetchLeaderboard() {
       if (!profile) return;
 
-      // Fetch all students ranked by XP
+      // Fetch all students ranked by XP with time-based tie-breaker
       const { data: allStats } = await supabase
         .from('student_stats')
         .select('*, profiles!inner(full_name, profile_photo_url, is_anonymous_on_leaderboard, role)')
         .eq('profiles.role', 'student')
-        .order('total_xp', { ascending: false });
+        .order('total_xp', { ascending: false })
+        .order('updated_at', { ascending: true });
 
       const ranked = (allStats || []).map((s, i) => ({ ...s, computedRank: i + 1 }));
       setTopStudents(ranked);

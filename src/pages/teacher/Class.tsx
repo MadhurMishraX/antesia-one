@@ -100,8 +100,13 @@ export default function Class() {
       };
     });
 
-    // Sort by XP initially
-    const sorted = processedStudents.sort((a, b) => b.overall.xp - a.overall.xp);
+    // Sort by XP initially with time-based tie-breaker
+    const sorted = processedStudents.sort((a, b) => {
+      if (b.overall.xp !== a.overall.xp) return b.overall.xp - a.overall.xp;
+      const timeA = new Date(a.stats?.updated_at || 0).getTime();
+      const timeB = new Date(b.stats?.updated_at || 0).getTime();
+      return timeA - timeB;
+    });
     setStudents(sorted);
     setLoading(false);
   };
@@ -115,9 +120,24 @@ export default function Class() {
   const filteredStudents = [...students]
     .filter(s => s.full_name.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => {
-      if (sortBy === 'xp') return b.overall.xp - a.overall.xp;
-      if (sortBy === 'accuracy') return b.overall.accuracy - a.overall.accuracy;
-      if (sortBy === 'score') return b.overall.avgScore - a.overall.avgScore;
+      if (sortBy === 'xp') {
+        if (b.overall.xp !== a.overall.xp) return b.overall.xp - a.overall.xp;
+        const timeA = new Date(a.stats?.updated_at || 0).getTime();
+        const timeB = new Date(b.stats?.updated_at || 0).getTime();
+        return timeA - timeB;
+      }
+      if (sortBy === 'accuracy') {
+        if (b.overall.accuracy !== a.overall.accuracy) return b.overall.accuracy - a.overall.accuracy;
+        const timeA = new Date(a.stats?.updated_at || 0).getTime();
+        const timeB = new Date(b.stats?.updated_at || 0).getTime();
+        return timeA - timeB;
+      }
+      if (sortBy === 'score') {
+        if (b.overall.avgScore !== a.overall.avgScore) return b.overall.avgScore - a.overall.avgScore;
+        const timeA = new Date(a.stats?.updated_at || 0).getTime();
+        const timeB = new Date(b.stats?.updated_at || 0).getTime();
+        return timeA - timeB;
+      }
       return 0;
     });
 
