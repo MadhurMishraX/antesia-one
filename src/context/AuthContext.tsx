@@ -85,21 +85,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
+      const currentUser = session?.user ?? null;
+      setUser(currentUser);
+      if (currentUser) {
+        fetchProfile(currentUser.id);
       } else {
         setProfile(null);
         setLoading(false);
       }
     });
 
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, []); // Fixed: Run auth listener setup ONLY ONCE
+
+  useEffect(() => {
     // Security Listeners for re-entry/focus
     window.addEventListener('focus', checkTimeout);
     window.addEventListener('visibilitychange', checkTimeout);
 
     return () => {
-      subscription.unsubscribe();
       window.removeEventListener('focus', checkTimeout);
       window.removeEventListener('visibilitychange', checkTimeout);
     };
