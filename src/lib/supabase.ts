@@ -8,7 +8,13 @@ if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('Supabase credentials missing. Please check your environment variables.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    storage: window.sessionStorage, // RAM-only storage: clear session on tab/browser close
+    persistSession: true,
+    autoRefreshToken: true
+  }
+});
 
 // 🌌 Antesia - Developed by Madhur Mishra (github: MadhurMishraX)
 
@@ -26,6 +32,8 @@ export interface Profile {
   subject: string | null;
   created_at: string;
   updated_at: string;
+  last_seen_at: string | null;
+  last_location: string | null;
 }
 
 export async function getProfile(userId: string): Promise<Profile | null> {

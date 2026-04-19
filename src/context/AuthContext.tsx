@@ -53,6 +53,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const signOut = useCallback(async () => {
+    sessionStorage.removeItem('admin_verified');
+    await supabase.auth.signOut();
+  }, []);
+
+  const checkTimeout = useCallback(async () => {
+    // If not logged in or profile not yet loaded, skip
+    if (!user || !profile?.last_seen_at) return;
+
+    const lastSeen = new Date(profile.last_seen_at).getTime();
+    const now = new Date().getTime();
+    const diffInMinutes = (now - lastSeen) / (1000 * 60);
+
+    // Iron Clad Security: 20-minute idle wall
+    if (diffInMinutes > 20) {
+      console.log('Session timed out (>20m idle). Executing security logout.');
+      await signOut();
+    }
+  }, [user, profile, signOut]);
+
   useEffect(() => {
     // Check active sessions and subscribe to auth changes
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -74,13 +94,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    // Security Listeners for re-entry/focus
+    window.addEventListener('focus', checkTimeout);
+    window.addEventListener('visibilitychange', checkTimeout);
 
-  const signOut = async () => {
-    sessionStorage.removeItem('admin_verified');
-    await supabase.auth.signOut();
-  };
+    return () => {
+      subscription.unsubscribe();
+      window.removeEventListener('focus', checkTimeout);
+      window.removeEventListener('visibilitychange', checkTimeout);
+    };
+  }, [checkTimeout]);
 
   return (
     <AuthContext.Provider value={{
