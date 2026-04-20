@@ -1,132 +1,91 @@
-# 🌌 ANTESIA: Advanced Gamified Learning Management System
+# 🌌 Antesia
 
-[![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)](https://github.com/MadhurMishraX/antesia)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/MadhurMishraX/antesia/blob/main/LICENSE)
-[![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue.svg)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Backend-Supabase-green.svg)](https://supabase.com/)
+[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.io/)
+[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
 
-## 🌟 Introduction
-**Antesía** is a high-performance, full-stack Learning Management System (LMS) engineered to bridge the gap between students and educators through a gamified, real-time ecosystem. Designed specifically for high-stakes exam preparation (like JEE/NEET), it transforms traditional study habits into a competitive journey using psychological triggers like streaks, leagues, and instant feedback loops.
-
----
-
-## 📸 Visual Overview
-
-| Dashboard | Assignment Interface |
-| :---: | :---: |
-| ![Dashboard Placeholder](https://via.placeholder.com/800x450?text=Student+Dashboard+Screenshot) | ![Assignment Placeholder](https://via.placeholder.com/800x450?text=Assignment+Interface+Screenshot) |
-| *Real-time stats, league progress, and bulletin board.* | *LaTeX rendering, navigation drawer, and auto-save.* |
-
-| Study Vault | Teacher Auditor | Doubt Section |
-| :---: | :---: | :---: |
-| ![Vault Placeholder](https://via.placeholder.com/400x225?text=Study+Vault) | ![Auditor Placeholder](https://via.placeholder.com/400x225?text=Teacher+Auditor) | ![Doubt Placeholder](https://via.placeholder.com/400x225?text=Doubt+Section) |
-| *Categorized modules by priority.* | *Module creation and manual grading.* | *Community-driven Q&A.* |
+**Antesia** is an intelligent, dual-role command center designed specifically for modern education. It bridges the gap between teacher instruction and student execution through a gamified, real-time interface.
 
 ---
 
-## 🚀 Core Features
+## ✨ Core Features
 
-### 🎓 For Students: The Gamified Journey
-- **Dynamic Command Center**: A real-time dashboard tracking **Rank**, **Daily Streak**, **Total XP**, and **Accuracy**.
-- **League System**: Progress through Bronze, Silver, Gold, and Platinum tiers based on XP milestones.
-- **Study Vault**: Subject-wise module organization (Physics, Chemistry, Maths) with priority tagging (*Crucial*, *Vital*, *Foundational*).
-- **Immersive Testing**: 
-    - **LaTeX Support**: High-fidelity rendering of complex formulas via KaTeX.
-    - **Hybrid Questions**: Support for MCQ and subjective text-based responses.
-    - **Persistence**: Real-time auto-save to cloud prevents data loss during sessions.
-- **Results & Analytics**: Post-submission breakdown with XP animations, accuracy metrics, and detailed explanations.
+### 👨‍🎓 Student Experience
+*   **Intelligent Dashboard**: Real-time tracking of XP, Global Rank, Accuracy, and Streaks with time-aware "Smart Greetings."
+*   **Academic Ready**: Built-in support for **LaTeX/KaTeX** rendering for complex math and science equations.
+*   **Study Vault**: Access all educational modules published by teachers with clear priority labeling (Crucial, Vital, Supporting).
+*   **Interactive Leaderboard**: A gamified global ranking system featuring a 3D-podium and "Trailblazer" tie-breaker logic (earlier completion wins ranks).
+*   **Doubt Section**: A collaborative space to post questions and help peers, fostering community learning.
+*   **Dynamic Module Interface**: Sleek, distraction-free interface for answering questions with real-time feedback and celebratory results.
+*   **Broadcast History**: Instant access to important announcements and urgent alerts from the teaching staff.
 
-### 👨‍🏫 For Teachers: The Auditor Suite
-- **Module Architect**: Create and manage assignments with custom XP rewards and due dates.
-- **Manual Grading Flow**: Specialized interface for reviewing and approving subjective text answers.
-- **Class Metrics**: Deep-dive into student performance with XP-synced leaderboards and accuracy trends.
-- **Doubt Management**: Context-aware Q&A system linked directly to specific questions.
+### 👩‍🏫 Teacher Command Center
+*   **Central Command**: A holistic view of class health with quick access to the most vital pedagogical tools.
+*   **The Auditor**: A robust management engine to create, edit, and publish study modules with specific XP rewards and priorities.
+*   **Class Analytics**: Deep-dive into student performance using advanced Recharts visualizations, tracking Accuracy, Effort, and Topic Mastery.
+*   **Student Management**: Detailed metrics for every student, including average time per question and subject-wise breakdowns.
+*   **Doubt Management**: Resolving student queries effectively to maintain a steady learning momentum.
 
-### 📢 Communication & Social
-- **Bulletin Board**: Global broadcast system for urgent announcements and motivational alerts.
-- **Doubt Section**: Community-driven forum with upvoting and peer-to-peer resolution.
-
----
-
-## 🛠️ Technical Architecture
-
-### Frontend Stack
-- **React 18 & TypeScript**: Component-based architecture with strict type safety.
-- **Tailwind CSS**: Utility-first styling for a responsive, mobile-first UI.
-- **Motion (Framer Motion)**: Fluid transitions and high-energy celebration animations.
-- **Recharts**: Interactive data visualization for performance metrics.
-- **KaTeX**: High-speed mathematical typesetting.
-
-### Backend Infrastructure (Supabase)
-- **PostgreSQL**: Relational database for complex student-teacher data relationships.
-- **Supabase Auth**: Secure authentication with role-based access control.
-- **Supabase Realtime**: WebSocket-based updates for broadcasts and live stats.
-- **Row Level Security (RLS)**: Granular data access policies ensuring privacy and integrity.
+### 🛡️ Iron-Clad Security
+*   **Session Management**: Zero-risk session handling using volatile memory (`sessionStorage`) that clears immediately on tab closure.
+*   **Idle Sentry**: Automatic security logout after **20 minutes** of inactivity to protect accounts on shared/public computers.
+*   **Role-Based Access**: Strict RBAC (Role-Based Access Control) for Students, Teachers, and Admins.
 
 ---
 
-## ⚙️ Setup & Installation
+## 🚀 Getting Started
 
 ### Prerequisites
-- **Node.js**: v18.x or higher
-- **npm**: v9.x or higher
-- **Supabase Account**: A free-tier project is sufficient.
+*   [Node.js](https://nodejs.org/) (v18 or higher)
+*   A [Supabase](https://supabase.com/) Project
 
-### 1. Clone & Install
-```bash
-git clone https://github.com/yourusername/antesia.git
-cd antesia
-npm install
-```
+### Installation & Local Setup
 
-### 2. Database Setup
-Antesia requires specific tables and RLS policies to function.
-1. Go to your [Supabase SQL Editor](https://app.supabase.com/).
-2. Copy the contents of [`supabase/schema.sql`](./supabase/schema.sql).
-3. Run the script to initialize tables, triggers, and security policies.
-4. **Important**: Ensure you enable Google Auth or Email Auth in the Supabase Auth settings.
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/MadhurMishraX/antesia.git
+    cd antesia
+    ```
 
-### 3. Environment Configuration
-Create a `.env` file in the root directory:
-```env
-VITE_SUPABASE_URL=your_project_url
-VITE_SUPABASE_ANON_KEY=your_anon_key
-VITE_ADMIN_PASSWORD=secure_teacher_password
-VITE_ADMIN_PIN=4_digit_admin_pin
-```
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
 
-### 4. Run Development Server
-```bash
-npm run dev
-```
+3.  **Environment Configuration**:
+    Create a `.env` file in the root directory and add your Supabase credentials:
+    ```env
+    VITE_SUPABASE_URL=your_supabase_url
+    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+    ```
+
+4.  **Start the development server**:
+    ```bash
+    npm run dev
+    ```
 
 ---
 
-## 📂 Database Schema Overview
+## 🛠️ Tech Stack
 
-| Table | Description |
-| :--- | :--- |
-| `profiles` | User identity and role definitions (Student/Teacher/Admin). |
-| `student_stats` | Core gamification data (XP, Streaks, Leagues). |
-| `modules` | Metadata for assignments and study materials. |
-| `questions` | The content library with LaTeX and option support. |
-| `assignment_submissions` | Lifecycle tracking for student attempts. |
-| `submission_answers` | Atomic storage for student responses. |
-| `broadcasts` | Global messages for the Bulletin Board. |
+*   **Frontend**: React 18, TypeScript, Vite
+*   **Styling**: Tailwind CSS (Native Dark Mode support)
+*   **Animations**: Framer Motion
+*   **Backend/DB**: Supabase (PostgreSQL + Real-time + Auth)
+*   **Charts**: Recharts
+*   **Icons**: Lucide React
 
 ---
 
-## 🔒 Security & RLS
-Antesía implements strict Row Level Security (RLS) to protect user data:
-- **Students**: Can only `SELECT` their own stats and `INSERT/UPDATE` their own submissions.
-- **Teachers**: Can `INSERT/UPDATE` modules and `SELECT` submissions for their assigned modules.
-- **Admins**: Comprehensive access for system maintenance and bulk data management.
+## 🌅 Design Philosophy
+Antesia follows a "Technical Dashboard" aesthetic—prioritizing information density and scannability while maintaining a clean, professional "Mission Control" feel. Every interaction is designed to reduce cognitive load and maximize focus.
 
 ---
 
-## 📄 License
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+## 🌌 Developed By
+**Madhur Mishra**  
+[GitHub](https://github.com/MadhurMishraX) | [LinkedIn](https://www.linkedin.com/in/madhurmishram2/)
 
----
-*Built with ❤️ for the next generation of engineers and doctors.*
+*"Empowering the next generation of learners through structured, gamified achievement."*
