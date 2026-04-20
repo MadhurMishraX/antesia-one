@@ -100,7 +100,29 @@ export default function Dashboard() {
     };
   }, [profile]);
 
-  if (loading) return null;
+  if (loading) return (
+    <div className="p-6 space-y-8 animate-pulse">
+      <div className="h-20 bg-surface/50 rounded-[40px] border border-surface/10" /> {/* TopBar Skeleton */}
+      <div className="grid grid-cols-2 gap-4">
+        {[1, 2, 3, 4].map(i => (
+          <div key={i} className="h-32 bg-surface/50 rounded-card border border-surface/10" />
+        ))}
+      </div>
+      <div className="h-24 bg-surface/50 rounded-card border border-surface/10" /> {/* League Skeleton */}
+      <div className="h-64 bg-surface/50 rounded-card border border-surface/10" /> {/* Bulletin Skeleton */}
+    </div>
+  );
+
+  // 🕒 Smart Greeting Logic
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) return 'Good morning';
+    if (hour >= 12 && hour < 17) return 'Good afternoon';
+    if (hour >= 17 && hour < 22) return 'Good evening';
+    return 'Burning the midnight oil?';
+  };
+
+  const greeting = getGreeting();
 
   const priorityColors: any = {
     Crucial: 'bg-danger text-white',
@@ -112,7 +134,7 @@ export default function Dashboard() {
   return (
     <div className="p-6 space-y-8 transition-colors duration-300">
       <TopBar 
-        title={`Good morning, ${profile?.full_name.split(' ')[0]} 👋`}
+        title={`${greeting}, ${profile?.full_name.split(' ')[0]} 👋`}
         subtitle={`${stats?.current_streak_days || 0} day streak 🔥`}
       />
 

@@ -41,7 +41,25 @@ export default function Leaderboard() {
     fetchLeaderboard();
   }, [profile]);
 
-  if (loading) return null;
+  if (loading) return (
+    <div className="p-6 space-y-8 animate-pulse">
+      <div className="h-20 bg-surface/50 rounded-[40px] border border-surface/10" /> {/* TopBar Skeleton */}
+      <div className="flex items-end justify-center gap-2 pt-12 pb-4">
+        {[1, 2, 3].map(i => (
+          <div key={i} className="flex-1 flex flex-col items-center gap-3">
+            <div className="w-16 h-16 rounded-full bg-surface/50 border-4 border-surface/10" />
+            <div className="w-12 h-3 bg-surface/50 rounded" />
+            <div className={`w-full rounded-t-2xl bg-surface/50 ${i === 1 ? 'h-24' : i === 0 ? 'h-16' : 'h-12'}`} />
+          </div>
+        ))}
+      </div>
+      <div className="space-y-3">
+        {[1, 2, 3, 4, 5].map(i => (
+          <div key={i} className="h-20 bg-surface/50 rounded-card border border-surface/10" />
+        ))}
+      </div>
+    </div>
+  );
 
   const getDisplayName = (s: any) => {
     if (s.profiles?.is_anonymous_on_leaderboard && s.student_id !== profile?.id) {
