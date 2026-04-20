@@ -86,6 +86,6 @@ Antesia follows a "Technical Dashboard" aesthetic—prioritizing information den
 
 ## 🌌 Developed By
 **Madhur Mishra**  
-[GitHub](https://github.com/MadhurMishraX) | [LinkedIn](https://www.linkedin.com/in/madhurmishram2/)
+[GitHub](https://github.com/MadhurMishraX) | [LinkedIn](https://www.linkedin.com/in/madhur-mishra-ai)
 
 *"Empowering the next generation of learners through structured, gamified achievement."*
