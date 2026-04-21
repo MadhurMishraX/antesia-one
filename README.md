@@ -10,7 +10,8 @@
 
 **Antesia** is an intelligent, dual-role command center designed for modern education. It bridges the gap between teacher instruction and student execution through a gamified, high-performance interface.
 
-[Live Demo](https://antesia.vercel.app) | [Internal Documentation](#)
+> [!IMPORTANT]
+> **m-markup Integration:** Antesia utilizes a customized `m-markup` engine to handle hybrid rendering of Markdown and LaTeX. This ensures that complex scientific equations and academic formatting remain consistent and high-definition across all student and teacher interfaces.
 
 ---
 
