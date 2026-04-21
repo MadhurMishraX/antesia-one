@@ -1,12 +1,30 @@
 # 🌌 Antesia
 
-[![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.io/)
-[![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)](https://www.framer.com/motion/)
+![React](https://img.shields.io/badge/React-18-blue?logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
+![Supabase](https://img.shields.io/badge/Supabase-Backend-green?logo=supabase)
+![Vite](https://img.shields.io/badge/Vite-Build-purple?logo=vite)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
+![GPL-2.0](https://img.shields.io/badge/License-GPL--2.0-yellow)
+![Status](https://img.shields.io/badge/Status-Project_Ready-brightgreen)
 
-**Antesia** is an intelligent, dual-role command center designed specifically for modern education. It bridges the gap between teacher instruction and student execution through a gamified, real-time interface.
+**Antesia** is an intelligent, dual-role command center designed for modern education. It bridges the gap between teacher instruction and student execution through a gamified, high-performance interface.
+
+[Live Demo](https://antesia.vercel.app) | [Internal Documentation](#)
+
+---
+
+## 📸 Screenshots
+
+### **Student Platform**
+| Dashboard | Leaderboard | Assignment Interface |
+|---|---|---|
+| ![Dashboard](./screenshots/dashboard.webp) | ![Leaderboard](./screenshots/leaderboard.webp) | ![UI](./screenshots/assignment.webp) |
+
+### **Teacher Command Center**
+| Class Analytics | Module Creator | Doubt Management |
+|---|---|---|
+| ![Analytics](./screenshots/analytics.webp) | ![Editor](./screenshots/auditor.webp) | ![Doubts](./screenshots/doubts.webp) |
 
 ---
 
@@ -14,73 +32,110 @@
 
 ### 👨‍🎓 Student Experience
 *   **Intelligent Dashboard**: Real-time tracking of XP, Global Rank, Accuracy, and Streaks with time-aware "Smart Greetings."
-*   **Academic Ready**: Built-in support for **LaTeX/KaTeX** rendering for complex math and science equations.
-*   **Study Vault**: Access all educational modules published by teachers with clear priority labeling (Crucial, Vital, Supporting).
-*   **Interactive Leaderboard**: A gamified global ranking system featuring a 3D-podium and "Trailblazer" tie-breaker logic (earlier completion wins ranks).
-*   **Doubt Section**: A collaborative space to post questions and help peers, fostering community learning.
-*   **Dynamic Module Interface**: Sleek, distraction-free interface for answering questions with real-time feedback and celebratory results.
-*   **Broadcast History**: Instant access to important announcements and urgent alerts from the teaching staff.
+*   **Academic Ready**: Native support for **LaTeX/KaTeX** rendering for complex math and science equations.
+*   **Interactive Leaderboard**: podiun-style ranking system with "Trailblazer" tie-breaker logic (earlier completion wins ranks).
+*   **Study Vault**: Access educational modules with priority labeling (Crucial, Vital, Supporting).
+*   **Collaborative Learning**: A built-in doubt section to post questions and help peers.
 
 ### 👩‍🏫 Teacher Command Center
-*   **Central Command**: A holistic view of class health with quick access to the most vital pedagogical tools.
-*   **The Auditor**: A robust management engine to create, edit, and publish study modules with specific XP rewards and priorities.
-*   **Class Analytics**: Deep-dive into student performance using advanced Recharts visualizations, tracking Accuracy, Effort, and Topic Mastery.
-*   **Student Management**: Detailed metrics for every student, including average time per question and subject-wise breakdowns.
-*   **Doubt Management**: Resolving student queries effectively to maintain a steady learning momentum.
+*   **The Auditor**: A robust management engine to create, edit, and publish study modules with XP rewards.
+*   **Class Analytics**: Deep-dive performance metrics using advanced Recharts visualizations.
+*   **Forensic Auditing**: Track student effort including average time per question and subject-wise mastery.
+*   **Secure Broadcasting**: Urgent alerts and announcements pushed directly to student feeds.
 
-### 🛡️ Iron-Clad Security
-*   **Session Management**: Zero-risk session handling using volatile memory (`sessionStorage`) that clears immediately on tab closure.
-*   **Idle Sentry**: Automatic security logout after **20 minutes** of inactivity to protect accounts on shared/public computers.
-*   **Role-Based Access**: Strict RBAC (Role-Based Access Control) for Students, Teachers, and Admins.
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-*   [Node.js](https://nodejs.org/) (v18 or higher)
-*   A [Supabase](https://supabase.com/) Project
-
-### Installation & Local Setup
-
-1.  **Clone the repository**:
-    ```bash
-    git clone https://github.com/MadhurMishraX/antesia.git
-    cd antesia
-    ```
-
-2.  **Install dependencies**:
-    ```bash
-    npm install
-    ```
-
-3.  **Environment Configuration**:
-    Create a `.env` file in the root directory and add your Supabase credentials:
-    ```env
-    VITE_SUPABASE_URL=your_supabase_url
-    VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
-    ```
-
-4.  **Start the development server**:
-    ```bash
-    npm run dev
-    ```
+### 🛡️ Built-in Security
+*   **Idle Sentry**: Automatic session termination after **20 minutes** of inactivity using local activity tracking.
+*   **Tab-Capture**: Immediate volatile memory (`sessionStorage`) cleanup upon tab closure.
+*   **Anti-Spam Login**: Proprietary client-side rate limiting to prevent database overload (Denial of Wallet).
+*   **2FA Admin Gate**: Dual-layer verification for administrative access including device fingerprinting.
 
 ---
 
-## 🛠️ Tech Stack
+## 🗃️ Database & Schema
 
-*   **Frontend**: React 18, TypeScript, Vite
-*   **Styling**: Tailwind CSS (Native Dark Mode support)
-*   **Animations**: Framer Motion
-*   **Backend/DB**: Supabase (PostgreSQL + Real-time + Auth)
-*   **Charts**: Recharts
-*   **Icons**: Lucide React
+Antesia is powered by **Supabase (PostgreSQL)**. The schema is designed for high relational integrity and real-time responsiveness.
+
+### **Manual Setup**
+1. Create a new [Supabase Project](https://supabase.com).
+2. Navigate to the **SQL Editor**.
+3. Copy and run the contents of [`/supabase/schema.sql`](./supabase/schema.sql).
+4. (Optional) Enable **Realtime** on the `broadcasts` and `student_stats` tables for live updates.
 
 ---
 
-## 🌅 Design Philosophy
-Antesia follows a "Technical Dashboard" aesthetic—prioritizing information density and scannability while maintaining a clean, professional "Mission Control" feel. Every interaction is designed to reduce cognitive load and maximize focus.
+## 📁 Project Structure
+
+```text
+src/
+├── components/        # Reusable UI components & Skeleton Loaders
+├── context/           # Auth & UI State Management
+├── lib/               # Database Clients (Supabase) + Mock Configs
+├── pages/             # Main Application Views (Student/Teacher/Admin)
+├── services/          # API & Logic Helpers
+└── types/             # TypeScript interfaces for DB entities
+```
+
+---
+
+## 🚀 Installation & Local Setup
+
+### **1. Prerequisites**
+*   [Node.js](https://nodejs.org/) (v18+)
+*   [Git](https://git-scm.com/)
+
+### **2. Setup**
+```bash
+# Clone the repository
+git clone https://github.com/MadhurMishraX/antesia.git
+cd antesia
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+### **3. Environment Variables**
+Create a `.env` file in the root directory:
+| Variable | Description |
+|---|---|
+| `VITE_SUPABASE_URL` | Your Supabase Project URL |
+| `VITE_SUPABASE_ANON_KEY` | Your Supabase Anon Public Key |
+| `VITE_ADMIN_PASSWORD` | Strong password for the Admin Panel |
+| `VITE_ADMIN_PIN` | 6-digit PIN for 2FA Admin Verification |
+
+---
+
+## 🚢 Deployment
+
+1. Push your code to **GitHub**.
+2. Connect the repository to **Vercel**.
+3. Configure the **Environment Variables** in the Vercel Dashboard.
+4. **Note:** Ensure your Supabase project's `Site URL` allows your Vercel domain.
+
+---
+
+## 🗺️ Roadmap
+- [x] LaTeX/KaTeX Integration
+- [x] Dynamic Session Timeout Logic
+- [x] Global Leaderboard Tie-breakers
+- [ ] AI-Powered Doubt Resolution (Gemini API)
+- [ ] Offline PWA Support
+- [ ] Parent Progress Portal
+
+---
+
+## 📄 License
+This project is licensed under the **GNU General Public License v2.0** - see the [LICENSE](./LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgements
+- [Supabase](https://supabase.com) - Real-time backend & Auth
+- [Framer Motion](https://framer.com/motion) - UI Orchestration
+- [Lucide](https://lucide.dev) - Professional Iconography
+- [Recharts](https://recharts.org) - Visual Data Analytics
 
 ---
 
@@ -88,4 +143,4 @@ Antesia follows a "Technical Dashboard" aesthetic—prioritizing information den
 **Madhur Mishra**  
 [GitHub](https://github.com/MadhurMishraX) | [LinkedIn](https://www.linkedin.com/in/madhur-mishra-ai)
 
-*"Empowering the next generation of learners through structured, gamified achievement."*
+*"Empowering the next generation of learners through structured achievement."*
