@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { motion } from 'motion/react';
@@ -13,9 +13,22 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const [cooldown, setCooldown] = useState(0);
+
+  useEffect(() => {
+    if (cooldown > 0) {
+      const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (cooldown === 0 && failedAttempts >= 5) {
+      setFailedAttempts(0);
+    }
+  }, [cooldown, failedAttempts]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (cooldown > 0) return;
+
     setLoading(true);
     setError(null);
 
@@ -52,6 +65,15 @@ export default function Login() {
       }
     } catch (err: any) {
       setError(err.message === 'Invalid login credentials' ? 'Invalid Login ID or Password' : err.message);
+      
+      setFailedAttempts(prev => {
+        const strikes = prev + 1;
+        if (strikes >= 5) {
+          setCooldown(30);
+          setError('Too many failed attempts. Login locked for 30 seconds.');
+        }
+        return strikes;
+      });
     } finally {
       setLoading(false);
     }
@@ -137,15 +159,19 @@ export default function Login() {
           </div>
 
           {error && (
-            <p className="text-danger text-xs text-center font-medium">{error}</p>
+            <p className="text-danger text-xs text-center font-medium animate-pulse">{error}</p>
           )}
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full py-3 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold rounded-button shadow-lg shadow-indigo-200 hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100"
+            disabled={loading || cooldown > 0}
+            className={`w-full py-3 font-bold rounded-button shadow-lg shadow-indigo-200 transition-all ${
+              cooldown > 0 
+                ? 'bg-gray-400 text-white cursor-not-allowed opacity-75'
+                : 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:scale-100'
+            }`}
           >
-            {loading ? 'Logging in...' : 'Login'}
+            {cooldown > 0 ? `Locked for ${cooldown}s` : loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
