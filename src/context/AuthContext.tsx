@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { supabase, Profile, getProfile } from '../lib/supabase';
 import { User } from '@supabase/supabase-js';
 
@@ -20,6 +20,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const lastActivityRef = useRef<number>(Date.now());
 
   const fetchProfile = async (userId: string) => {
     const profileData = await getProfile(userId);
@@ -59,19 +60,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const checkTimeout = useCallback(async () => {
-    // If not logged in or profile not yet loaded, skip
-    if (!user || !profile?.last_seen_at) return;
+    // If not logged in, skip
+    if (!user) return;
 
-    const lastSeen = new Date(profile.last_seen_at).getTime();
-    const now = new Date().getTime();
-    const diffInMinutes = (now - lastSeen) / (1000 * 60);
+    const now = Date.now();
+    const diffInMinutes = (now - lastActivityRef.current) / (1000 * 60);
 
     // Iron Clad Security: 20-minute idle wall
     if (diffInMinutes > 20) {
       console.log('Session timed out (>20m idle). Executing security logout.');
       await signOut();
     }
-  }, [user, profile, signOut]);
+  }, [user, signOut]);
 
   useEffect(() => {
     // Check active sessions and subscribe to auth changes
@@ -101,11 +101,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []); // Fixed: Run auth listener setup ONLY ONCE
 
   useEffect(() => {
+    // Reset local stopwatch on user interaction
+    const resetTimer = () => {
+      lastActivityRef.current = Date.now();
+    };
+
+    window.addEventListener('mousedown', resetTimer);
+    window.addEventListener('keydown', resetTimer);
+    window.addEventListener('scroll', resetTimer, true);
+    window.addEventListener('touchstart', resetTimer);
+
     // Security Listeners for re-entry/focus
     window.addEventListener('focus', checkTimeout);
-    window.addEventListener('visibilitychange', checkTimeout);
+    window.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        checkTimeout();
+      }
+    });
 
     return () => {
+      window.removeEventListener('mousedown', resetTimer);
+      window.removeEventListener('keydown', resetTimer);
+      window.removeEventListener('scroll', resetTimer, true);
+      window.removeEventListener('touchstart', resetTimer);
       window.removeEventListener('focus', checkTimeout);
       window.removeEventListener('visibilitychange', checkTimeout);
     };
