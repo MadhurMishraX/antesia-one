@@ -25,8 +25,19 @@ CREATE TABLE public.profiles (
     push_notifications_enabled BOOLEAN NOT NULL DEFAULT TRUE,
     dark_mode_enabled BOOLEAN NOT NULL DEFAULT FALSE,
     subject VARCHAR(100), -- Teacher only
+    last_seen_at TIMESTAMPTZ,
+    last_location VARCHAR(200),
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- admin_security_logs table
+CREATE TABLE public.admin_security_logs (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    fingerprint TEXT,
+    user_agent TEXT,
+    status TEXT CHECK (status IN ('success', 'fail')),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
 -- modules table
@@ -165,6 +176,7 @@ ALTER TABLE public.broadcasts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.doubts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.doubt_replies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_security_logs ENABLE ROW LEVEL SECURITY;
 
 -- Helper function to check if user is admin without recursion
 CREATE OR REPLACE FUNCTION public.is_admin()
@@ -249,6 +261,10 @@ CREATE POLICY "Teachers can insert notifications" ON public.notifications FOR IN
     EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'teacher')
 );
 CREATE POLICY "Admins can do everything on notifications" ON public.notifications FOR ALL USING (public.is_admin());
+
+-- Admin Security Logs: Anyone can insert (to log attempts), only admin can view.
+CREATE POLICY "Anyone can insert security logs" ON public.admin_security_logs FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admins can view security logs" ON public.admin_security_logs FOR SELECT USING (public.is_admin());
 
 -- 4. Triggers & Functions
 
