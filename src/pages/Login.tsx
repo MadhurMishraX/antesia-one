@@ -107,6 +107,9 @@ export default function Login() {
               value={loginId}
               onChange={(e) => setLoginId(e.target.value)}
               className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-input focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck="false"
               required
             />
           </div>
