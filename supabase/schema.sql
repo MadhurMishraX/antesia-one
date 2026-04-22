@@ -34,10 +34,17 @@ CREATE TABLE public.profiles (
 -- admin_security_logs table
 CREATE TABLE public.admin_security_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    fingerprint TEXT,
+    fingerprint TEXT NOT NULL,
     user_agent TEXT,
-    status TEXT CHECK (status IN ('success', 'fail')),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    status TEXT NOT NULL CHECK (status IN ('success', 'fail')),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- admin_trusted_devices table
+CREATE TABLE public.admin_trusted_devices (
+    fingerprint TEXT PRIMARY KEY,
+    label TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- modules table
@@ -177,6 +184,7 @@ ALTER TABLE public.doubts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.doubt_replies ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.admin_security_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_trusted_devices ENABLE ROW LEVEL SECURITY;
 
 -- Helper function to check if user is admin without recursion
 CREATE OR REPLACE FUNCTION public.is_admin()
@@ -262,9 +270,14 @@ CREATE POLICY "Teachers can insert notifications" ON public.notifications FOR IN
 );
 CREATE POLICY "Admins can do everything on notifications" ON public.notifications FOR ALL USING (public.is_admin());
 
--- Admin Security Logs: Anyone can insert (to log attempts), only admin can view.
-CREATE POLICY "Anyone can insert security logs" ON public.admin_security_logs FOR INSERT WITH CHECK (true);
-CREATE POLICY "Admins can view security logs" ON public.admin_security_logs FOR SELECT USING (public.is_admin());
+-- Admin Security Logs: Hardened Forensics
+CREATE POLICY "Allow recording security attempts" ON public.admin_security_logs FOR INSERT WITH CHECK (true);
+CREATE POLICY "Admins view logs" ON public.admin_security_logs FOR SELECT USING (public.is_admin());
+CREATE POLICY "Immutable logs" ON public.admin_security_logs FOR UPDATE USING (false);
+CREATE POLICY "Indestructible logs" ON public.admin_security_logs FOR DELETE USING (false);
+
+-- Admin Trusted Devices
+CREATE POLICY "Admins manage trust" ON public.admin_trusted_devices FOR ALL USING (public.is_admin());
 
 -- 4. Triggers & Functions
 
