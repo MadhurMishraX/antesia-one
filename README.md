@@ -30,7 +30,7 @@
 ### **Teacher Command Center**
 | Class Analytics | Module Creator | Doubt Management |
 |---|---|---|
-| ![Analytics](./screenshots/analytics.png) | ![Editor](./screenshots/editor.jxr) | ![Doubts](./screenshots/doubts.png) |
+| ![Analytics](./screenshots/analytics.png) | ![Editor](./screenshots/editor.png) | ![Doubts](./screenshots/doubts.png) |
 
 ---
 
