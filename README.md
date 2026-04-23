@@ -17,15 +17,20 @@
 
 ## 📸 Screenshots
 
-### **Student Platform**
-| Dashboard | Leaderboard | Assignment Interface |
+### **Authentication & Student Hub**
+| Secure Login | Student Dashboard | Study Vault |
 |---|---|---|
-| ![Dashboard](./screenshots/dashboard.webp) | ![Leaderboard](./screenshots/leaderboard.webp) | ![UI](./screenshots/assignment.webp) |
+| ![Login](./screenshots/login.png) | ![Dashboard](./screenshots/dashboard.png) | ![Vault](./screenshots/studyvault.png) |
+
+### **Gamification & Assignments**
+| Global Leaderboard | Assignment UI | Submission Results |
+|---|---|---|
+| ![Leaderboard](./screenshots/leaderboard.png) | ![Assignment](./screenshots/assignment.png) | ![Results](./screenshots/results.png) |
 
 ### **Teacher Command Center**
 | Class Analytics | Module Creator | Doubt Management |
 |---|---|---|
-| ![Analytics](./screenshots/analytics.webp) | ![Editor](./screenshots/auditor.webp) | ![Doubts](./screenshots/doubts.webp) |
+| ![Analytics](./screenshots/analytics.png) | ![Editor](./screenshots/auditor.png) | ![Doubts](./screenshots/doubts.png) |
 
 ---
 
