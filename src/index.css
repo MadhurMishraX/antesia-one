@@ -1,0 +1,60 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-primary: #4F46E5;
+  --color-accent: #7C3AED;
+  --color-success: #10B981;
+  --color-danger: #F43F5E;
+  --color-warning: #F59E0B;
+  
+  --color-surface: var(--surface);
+  --color-background: var(--background);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+
+  --radius-card: 16px;
+  --radius-button: 12px;
+  --radius-input: 8px;
+  --radius-pill: 999px;
+}
+
+@layer base {
+  :root {
+    --background: #F5F5F7;
+    --surface: #FFFFFF;
+    --text-primary: #0F172A;
+    --text-muted: #64748B;
+  }
+
+  .dark {
+    --background: #0F172A;
+    --surface: #1E293B;
+    --text-primary: #F8FAFC;
+    --text-muted: #94A3B8;
+  }
+
+  body {
+    @apply bg-background text-text-primary font-sans antialiased transition-colors duration-300;
+  }
+}
+
+/* Custom styles for the floating bottom nav */
+.bottom-nav-glass {
+  @apply fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-32px)] max-w-md h-16 bg-surface/80 backdrop-blur-md border border-surface/20 rounded-pill shadow-lg flex items-center justify-around px-6 z-50;
+}
+
+/* Tab styles */
+.nav-tab {
+  @apply flex flex-col items-center justify-center gap-1 transition-colors;
+}
+
+.nav-tab-active {
+  @apply text-primary;
+}
+
+.nav-tab-inactive {
+  @apply text-text-muted;
+}
