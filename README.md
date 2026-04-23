@@ -20,7 +20,7 @@
 ### **Authentication & Student Hub**
 | Secure Login | Student Dashboard | Study Vault |
 |---|---|---|
-| ![Login](./screenshots/login.jxr) | ![Dashboard](./screenshots/dashboard.png) | ![Vault](./screenshots/studyvault.png) |
+| ![Login](./screenshots/login.png) | ![Dashboard](./screenshots/dashboard.png) | ![Vault](./screenshots/studyvault.png) |
 
 ### **Gamification & Assignments**
 | Global Leaderboard | Assignment UI | Submission Results |
