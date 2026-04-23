@@ -20,7 +20,7 @@
 ### **Authentication & Student Hub**
 | Secure Login | Student Dashboard | Study Vault |
 |---|---|---|
-| ![Login](./screenshots/login.png) | ![Dashboard](./screenshots/dashboard.png) | ![Vault](./screenshots/studyvault.png) |
+| ![Login](./screenshots/login.jxr) | ![Dashboard](./screenshots/dashboard.png) | ![Vault](./screenshots/studyvault.png) |
 
 ### **Gamification & Assignments**
 | Global Leaderboard | Assignment UI | Submission Results |
@@ -30,7 +30,7 @@
 ### **Teacher Command Center**
 | Class Analytics | Module Creator | Doubt Management |
 |---|---|---|
-| ![Analytics](./screenshots/analytics.png) | ![Editor](./screenshots/auditor.png) | ![Doubts](./screenshots/doubts.png) |
+| ![Analytics](./screenshots/analytics.png) | ![Editor](./screenshots/editor.jxr) | ![Doubts](./screenshots/doubts.png) |
 
 ---
 
