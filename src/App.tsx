@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Login from './pages/Login';
 import { StudentLayout, TeacherLayout } from './components/Layout';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { InstallPrompt } from './components/InstallPrompt';
 
 // Student Pages
 import Dashboard from './pages/student/Dashboard';
@@ -176,6 +177,7 @@ export default function App() {
     <ErrorBoundary>
       <AuthProvider>
         <BrowserRouter>
+          <InstallPrompt />
           <AppRoutes />
         </BrowserRouter>
       </AuthProvider>
