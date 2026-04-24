@@ -12,13 +12,18 @@ export default defineConfig(({mode}) => {
       tailwindcss(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.ico', 'logo.png'],
+        devOptions: {
+          enabled: true
+        },
+        includeAssets: ['logo.png'],
         manifest: {
           name: 'Antesia',
           short_name: 'Antesia',
           description: 'The ultimate assignment and learning management platform',
           theme_color: '#9333ea',
           background_color: '#020617',
+          display: 'standalone',
+          start_url: '/',
           icons: [
             {
               src: 'logo.png',

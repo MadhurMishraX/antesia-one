@@ -128,7 +128,7 @@ export default function Login() {
               placeholder="Login ID"
               value={loginId}
               onChange={(e) => setLoginId(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-input focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-gray-900"
+              className="w-full pl-10 pr-4 py-3 border border-gray-200 bg-gray-50 text-gray-900 rounded-input focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white focus:border-primary transition-all"
               autoCapitalize="none"
               autoCorrect="off"
               spellCheck="false"
@@ -146,7 +146,7 @@ export default function Login() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full pl-10 pr-12 py-3 border border-gray-200 rounded-input focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all text-gray-900"
+              className="w-full pl-10 pr-12 py-3 border border-gray-200 bg-gray-50 text-gray-900 rounded-input focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-white focus:border-primary transition-all"
               required
             />
             <button
