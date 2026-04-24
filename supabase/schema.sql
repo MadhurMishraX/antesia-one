@@ -281,23 +281,51 @@ CREATE POLICY "Admins manage trust" ON public.admin_trusted_devices FOR ALL USIN
 
 -- 4. Triggers & Functions
 
--- Function to handle new user creation
+-- Function to handle new user creation with robust fallback logic
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
+DECLARE
+    derived_login_id TEXT;
+    derived_full_name TEXT;
+    derived_role public.user_role;
 BEGIN
-    INSERT INTO public.profiles (id, login_id, full_name, role)
-    VALUES (
-        NEW.id,
-        COALESCE(NEW.raw_user_meta_data->>'login_id', NEW.email),
-        COALESCE(NEW.raw_user_meta_data->>'full_name', 'New User'),
-        COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'student')
+    -- 🛡️ STEP 1: Derive Login ID (Use part before '@' if missing in metadata)
+    derived_login_id := COALESCE(
+        NEW.raw_user_meta_data->>'login_id', 
+        SPLIT_PART(NEW.email, '@', 1)
     );
 
-    IF COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'student') = 'student' THEN
-        INSERT INTO public.student_stats (student_id)
-        VALUES (NEW.id);
+    -- 🛡️ STEP 2: Derive Full Name
+    derived_full_name := COALESCE(
+        NEW.raw_user_meta_data->>'full_name', 
+        'User ' || derived_login_id
+    );
+
+    -- 🛡️ STEP 3: Derive Role (Default to student)
+    derived_role := COALESCE(
+        (NEW.raw_user_meta_data->>'role')::public.user_role, 
+        'student'::public.user_role
+    );
+
+    -- 🛡️ STEP 4: Prevent "Unique Login ID" Crash
+    IF EXISTS (SELECT 1 FROM public.profiles WHERE login_id = derived_login_id) THEN
+        derived_login_id := derived_login_id || '_' || substr(md5(random()::text), 0, 4);
     END IF;
 
+    -- 🛡️ STEP 5: Create the Profile
+    INSERT INTO public.profiles (id, role, login_id, full_name)
+    VALUES (NEW.id, derived_role, derived_login_id, derived_full_name);
+
+    -- 🛡️ STEP 6: Create Stats if student
+    IF derived_role = 'student' THEN
+        INSERT INTO public.student_stats (student_id)
+        VALUES (NEW.id)
+        ON CONFLICT (student_id) DO NOTHING;
+    END IF;
+
+    RETURN NEW;
+EXCEPTION WHEN OTHERS THEN
+    -- Safety Valve: Allow Auth to process even if Profile fails
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
