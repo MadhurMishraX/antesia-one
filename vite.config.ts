@@ -18,6 +18,9 @@ export default defineConfig(({mode}) => {
           navigateFallback: 'index.html',
         },
         includeAssets: ['logo.png'],
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        },
         manifest: {
           name: 'Antesia',
           short_name: 'Antesia',
@@ -26,22 +29,26 @@ export default defineConfig(({mode}) => {
           background_color: '#020617',
           display: 'standalone',
           start_url: '/',
+          scope: '/',
+          orientation: 'portrait',
           icons: [
             {
               src: '/logo.png',
               sizes: '192x192',
-              type: 'image/png'
-            },
-            {
-              src: '/logo.png',
-              sizes: '512x512',
-              type: 'image/png'
+              type: 'image/png',
+              purpose: 'any'
             },
             {
               src: '/logo.png',
               sizes: '512x512',
               type: 'image/png',
-              purpose: 'any maskable'
+              purpose: 'any'
+            },
+            {
+              src: '/logo.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'maskable'
             }
           ]
         }

@@ -4,40 +4,61 @@ import { Download, X } from 'lucide-react';
 export function InstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showPrompt, setShowPrompt] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    const handleBeforeInstallPrompt = (e: any) => {
-      // Prevent Chrome 67 and earlier from automatically showing the prompt
+    if (dismissed) return;
+
+    // ✅ Check if event was already captured before React mounted
+    const cached = (window as any).__installPromptEvent;
+    if (cached) {
+      setDeferredPrompt(cached);
+      setShowPrompt(true);
+    }
+
+    // ✅ Also listen in case it fires after mount
+    const handleInstallReady = () => {
+      const e = (window as any).__installPromptEvent;
+      if (e) {
+        setDeferredPrompt(e);
+        setShowPrompt(true);
+      }
+    };
+
+    const handleBeforeInstall = (e: any) => {
       e.preventDefault();
-      // Stash the event so it can be triggered later.
+      (window as any).__installPromptEvent = e;
       setDeferredPrompt(e);
-      // Update UI to notify the user they can add to home screen
       setShowPrompt(true);
     };
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('pwa-install-ready', handleInstallReady);
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
 
-    // Clean up
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('pwa-install-ready', handleInstallReady);
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
     };
-  }, []);
+  }, [dismissed]);
 
   const handleInstallClick = async () => {
     if (!deferredPrompt) return;
-    
-    // Show the install prompt
     deferredPrompt.prompt();
-    
-    // Wait for the user to respond to the prompt
     const { outcome } = await deferredPrompt.userChoice;
-    
-    // We've used the prompt, and can't use it again, throw it away
+    console.log('PWA install outcome:', outcome);
+    (window as any).__installPromptEvent = null;
     setDeferredPrompt(null);
     setShowPrompt(false);
   };
 
-  if (!showPrompt) return null;
+  const handleDismiss = () => {
+    setShowPrompt(false);
+    setDismissed(true);
+    // Optional: remember dismissal in session
+    sessionStorage.setItem('pwa-prompt-dismissed', '1');
+  };
+
+  if (!showPrompt || !deferredPrompt) return null;
 
   return (
     <div className="fixed top-0 left-0 right-0 p-4 z-50 animate-in slide-in-from-top fade-in duration-300">
@@ -55,7 +76,7 @@ export function InstallPrompt() {
             Install
           </button>
           <button 
-            onClick={() => setShowPrompt(false)}
+            onClick={handleDismiss}
             className="p-1.5 hover:bg-white/20 rounded-full transition-colors"
           >
             <X size={20} />
