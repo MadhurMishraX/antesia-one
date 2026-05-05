@@ -1,12 +1,11 @@
 # 🌌 Antesia
 
-![React](https://img.shields.io/badge/React-18-blue?logo=react)
+![React](https://img.shields.io/badge/React-19-blue?logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript)
 ![Supabase](https://img.shields.io/badge/Supabase-Backend-green?logo=supabase)
 ![Vite](https://img.shields.io/badge/Vite-Build-purple?logo=vite)
-![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?logo=tailwind-css&logoColor=white)
-![GPL-2.0](https://img.shields.io/badge/License-GPL--2.0-yellow)
-![Status](https://img.shields.io/badge/Status-Project_Ready-brightgreen)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4.0-38B2AC?logo=tailwind-css&logoColor=white)
+![PWA](https://img.shields.io/badge/PWA-Ready-orange?logo=pwa)
 
 **Antesia** is an intelligent, dual-role command center designed for modern education. It bridges the gap between teacher instruction and student execution through a gamified, high-performance interface.
 
@@ -39,7 +38,7 @@
 ### 👨‍🎓 Student Experience
 *   **Intelligent Dashboard**: Real-time tracking of XP, Global Rank, Accuracy, and Streaks with time-aware "Smart Greetings."
 *   **Academic Ready**: Native support for **LaTeX/KaTeX** rendering for complex math and science equations.
-*   **Interactive Leaderboard**: podiun-style ranking system with "Trailblazer" tie-breaker logic (earlier completion wins ranks).
+*   **Interactive Leaderboard**: Podium-style ranking system with "Trailblazer" tie-breaker logic (earlier completion wins ranks).
 *   **Study Vault**: Access educational modules with priority labeling (Crucial, Vital, Supporting).
 *   **Collaborative Learning**: A built-in doubt section to post questions and help peers.
 
@@ -49,11 +48,11 @@
 *   **Forensic Auditing**: Track student effort including average time per question and subject-wise mastery.
 *   **Secure Broadcasting**: Urgent alerts and announcements pushed directly to student feeds.
 
-### 🛡️ Built-in Security
-*   **Idle Sentry**: Automatic session termination after **20 minutes** of inactivity using local activity tracking.
-*   **Tab-Capture**: Immediate volatile memory (`sessionStorage`) cleanup upon tab closure.
-*   **Anti-Spam Login**: Proprietary client-side rate limiting to prevent database overload (Denial of Wallet).
-*   **2FA Admin Gate**: Dual-layer verification for administrative access including device fingerprinting.
+### 📱 Progressive Web App (PWA)
+*   **Offline Access**: Core assets cached via Workbox for reliability in low-connectivity environments.
+*   **Install Prompt**: Custom smart-detection logic to trigger installation banners on supported devices.
+*   **Standalone Mode**: Full-screen "app-like" experience with custom theme colors and splash screens.
+*   **Dynamic Updates**: Auto-refresh strategy to ensure users always run the latest version of the platform.
 
 ---
 
@@ -73,12 +72,26 @@ Antesia is powered by **Supabase (PostgreSQL)**. The schema is designed for high
 
 ```text
 src/
-├── components/        # Reusable UI components & Skeleton Loaders
-├── context/           # Auth & UI State Management
-├── lib/               # Database Clients (Supabase) + Mock Configs
-├── pages/             # Main Application Views (Student/Teacher/Admin)
-├── services/          # API & Logic Helpers
-└── types/             # TypeScript interfaces for DB entities
+├── components/          # Reusable UI components
+│   ├── ui/              # Base primitive components
+│   ├── ErrorBoundary.tsx# Global error handling
+│   ├── InstallPrompt.tsx# PWA installation interface
+│   ├── Layout.tsx       # Main app shell & navigation
+│   └── TopBar.tsx       # Global header with status indicators
+├── context/             # Global State
+│   └── AuthContext.tsx  # Supabase auth & user profile sync
+├── lib/                 # Utilities & Core Logic
+│   ├── constants.ts     # Global configuration & enums
+│   ├── mmarkupTranspiler.ts # LaTeX + Markdown engine
+│   └── supabase.ts      # Database client initialization
+├── pages/               # Main Routed Views
+│   ├── student/         # Student-specific dashboard & interfaces
+│   ├── teacher/         # Analytics & Content Management (Auditor)
+│   ├── AdminLogin.tsx   # Secured admin gate
+│   ├── AdminPanel.tsx   # System-wide oversight
+│   └── Login.tsx        # Unified authentication portal
+├── App.tsx              # Routing & Provider orchestration
+└── main.tsx             # Entry point & PWA registration
 ```
 
 ---
@@ -108,27 +121,19 @@ Create a `.env` file in the root directory:
 |---|---|
 | `VITE_SUPABASE_URL` | Your Supabase Project URL |
 | `VITE_SUPABASE_ANON_KEY` | Your Supabase Anon Public Key |
+| `GEMINI_API_KEY` | Key for AI-powered features (optional) |
 | `VITE_ADMIN_PASSWORD` | Strong password for the Admin Panel |
 | `VITE_ADMIN_PIN` | 6-digit PIN for 2FA Admin Verification |
 
 ---
 
-## 🚢 Deployment
-
-1. Push your code to **GitHub**.
-2. Connect the repository to **Vercel**.
-3. Configure the **Environment Variables** in the Vercel Dashboard.
-4. **Note:** Ensure your Supabase project's `Site URL` allows your Vercel domain.
-
----
-
 ## 🗺️ Roadmap
 - [x] LaTeX/KaTeX Integration
-- [x] Dynamic Session Timeout Logic
 - [x] Global Leaderboard Tie-breakers
+- [x] Enhanced PWA Offline Support & Install Hooks
 - [ ] AI-Powered Doubt Resolution (Gemini API)
-- [ ] Offline PWA Support
 - [ ] Parent Progress Portal
+- [ ] Multi-class sub-management
 
 ---
 
@@ -150,3 +155,4 @@ This project is licensed under the **GNU General Public License v2.0** - see the
 [GitHub](https://github.com/MadhurMishraX) | [LinkedIn](https://www.linkedin.com/in/madhur-mishra-ai)
 
 *"Empowering the next generation of learners through structured achievement."*
+
