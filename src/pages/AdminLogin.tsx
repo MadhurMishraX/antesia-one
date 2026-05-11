@@ -4,10 +4,7 @@ import { supabase } from '../lib/supabase';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'motion/react';
 import { Lock, ShieldCheck, AlertCircle, ArrowRight, Loader2 } from 'lucide-react';
-import { CONFIG } from '../config';
-
-const ADMIN_EMAIL = CONFIG.admin.email;
-const ADMIN_PIN = CONFIG.admin.pin;
+import { ADMIN_EMAIL } from '../config';
 
 export default function AdminLogin() {
   const { user, profile, loading: authLoading } = useAuth();
@@ -117,28 +114,46 @@ export default function AdminLogin() {
     setLoading(true);
     setError(null);
 
-    if (pin === ADMIN_PIN) {
-      // Success phase 2
-      sessionStorage.setItem('admin_verified', 'true');
+    try {
+      // Get the current session token for server-side verification
+      const { data: { session } } = await supabase.auth.getSession();
       
-      // Log successful session verification
+      if (!session?.access_token) {
+        throw new Error('Session expired. Please log in again.');
+      }
+
       const fingerprint = localStorage.getItem('ants_dev_sig') || 'unknown';
-      await supabase.from('admin_security_logs').insert({
-        fingerprint,
-        user_agent: navigator.userAgent,
-        status: 'success'
+
+      // Verify PIN server-side via the serverless function
+      const response = await fetch('/api/verify-pin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+          'X-Device-Fingerprint': fingerprint,
+        },
+        body: JSON.stringify({ pin }),
       });
-      
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'PIN verification failed');
+      }
+
+      // PIN verified server-side — grant access
+      sessionStorage.setItem('admin_verified', 'true');
       navigate('/admin');
-    } else {
-      // Failure - log out immediately as requested
+    } catch (err: any) {
+      // On failure, sign out and reset
       await supabase.auth.signOut();
-      setError('Access denied: Invalid PIN');
+      setError(err.message || 'Access denied: Invalid PIN');
       setStep('credentials');
       setPin('');
       setPassword('');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   return (

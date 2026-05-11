@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { motion } from 'motion/react';
 import { User, Lock, Eye, EyeOff } from 'lucide-react';
-import { CONFIG } from '../config';
+import { ADMIN_EMAIL } from '../config';
 
 export default function Login() {
   const navigate = useNavigate();
@@ -35,7 +35,7 @@ export default function Login() {
     try {
       // Handle admin login specially
       const email = loginId.toLowerCase() === 'admin' 
-        ? CONFIG.admin.email 
+        ? ADMIN_EMAIL 
         : `${loginId.toLowerCase()}@antesia.com`;
       
       const { data, error: authError } = await supabase.auth.signInWithPassword({
