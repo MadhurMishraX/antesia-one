@@ -194,12 +194,47 @@ export default function AdminPanel() {
 
   const pageSize = 25;
 
-  // --- Auth Check ---
+  // --- Auth & PIN Session Check ---
   useEffect(() => {
-    if (profile && profile.role !== 'admin') {
-      navigate('/', { replace: true });
-    }
-  }, [profile, navigate]);
+    const checkPinVerification = async () => {
+      if (!profile) return;
+      
+      // 1. Check basic role
+      if (profile.role !== 'admin') {
+        navigate('/', { replace: true });
+        return;
+      }
+
+      // 2. Heartbeat: Verify with server that this session/device actually passed the PIN check
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error('No session');
+
+        const fingerprint = localStorage.getItem('ants_dev_sig') || 'unknown';
+        const response = await fetch('/api/verify-session', {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'X-Device-Fingerprint': fingerprint
+          }
+        });
+
+        const result = await response.json();
+        if (!response.ok || !result.verified) {
+          throw new Error('PIN verification expired or bypassed');
+        }
+        
+        // Ensure local flag matches server state
+        sessionStorage.setItem('admin_verified', 'true');
+      } catch (err) {
+        console.error('Security verification failed:', err);
+        sessionStorage.removeItem('admin_verified');
+        signOut();
+        navigate('/admin-login', { replace: true });
+      }
+    };
+
+    checkPinVerification();
+  }, [profile, navigate, signOut]);
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type });

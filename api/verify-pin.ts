@@ -65,6 +65,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(403).json({ error: 'Admin access only' });
     }
 
+    // 🛡️ BRUTE-FORCE PROTECTION
+    // Check for recent failures from this device
+    const fingerprint = req.headers['x-device-fingerprint'] as string || 'unknown';
+    const fifteenMinsAgo = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+
+    const { count: failCount } = await supabase
+      .from('admin_security_logs')
+      .select('*', { count: 'exact', head: true })
+      .eq('fingerprint', fingerprint)
+      .eq('status', 'fail')
+      .gt('created_at', fifteenMinsAgo);
+
+    if (failCount && failCount >= 5) {
+      return res.status(429).json({ 
+        error: 'Too many failed attempts. Device locked for 15 minutes.' 
+      });
+    }
+
     // Compare PIN server-side (the ADMIN_PIN env var has no VITE_ prefix,
     // so it is NEVER bundled into client-side code)
     const serverPin = process.env.ADMIN_PIN;
@@ -74,10 +92,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return res.status(500).json({ error: 'Server configuration error' });
     }
 
-    if (pin !== serverPin) {
+    // Timing-safe comparison to prevent timing attacks
+    const isPinCorrect = (pin: string, actual: string) => {
+      if (pin.length !== actual.length) return false;
+      let result = 0;
+      for (let i = 0; i < pin.length; i++) {
+        result |= pin.charCodeAt(i) ^ actual.charCodeAt(i);
+      }
+      return result === 0;
+    };
+
+    if (!isPinCorrect(pin, serverPin)) {
       // Log failed PIN attempt
-      const fingerprint = req.headers['x-device-fingerprint'] as string || 'unknown';
       await supabase.from('admin_security_logs').insert({
+        user_id: user.id,
         fingerprint,
         user_agent: req.headers['user-agent'] || 'unknown',
         status: 'fail',
@@ -87,8 +115,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
 
     // PIN is correct — log success
-    const fingerprint = req.headers['x-device-fingerprint'] as string || 'unknown';
     await supabase.from('admin_security_logs').insert({
+      user_id: user.id,
       fingerprint,
       user_agent: req.headers['user-agent'] || 'unknown',
       status: 'success',

@@ -73,8 +73,9 @@ export default function AdminLogin() {
       // Get fingerprint
       const fingerprint = localStorage.getItem('ants_dev_sig') || 'unknown';
 
-      const logAttempt = async (status: 'success' | 'fail') => {
+      const logAttempt = async (status: 'success' | 'fail', userId?: string) => {
         await supabase.from('admin_security_logs').insert({
+          user_id: userId,
           fingerprint,
           user_agent: navigator.userAgent,
           status
@@ -100,7 +101,7 @@ export default function AdminLogin() {
       }
 
       // Success phase 1
-      await logAttempt('success');
+      await logAttempt('success', data.user.id);
       setStep('pin');
     } catch (err: any) {
       setError(err.message);

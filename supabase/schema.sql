@@ -34,6 +34,7 @@ CREATE TABLE public.profiles (
 -- admin_security_logs table
 CREATE TABLE public.admin_security_logs (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
     fingerprint TEXT NOT NULL,
     user_agent TEXT,
     status TEXT NOT NULL CHECK (status IN ('success', 'fail')),
