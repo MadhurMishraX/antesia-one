@@ -17,12 +17,6 @@ export default function AdminLogin() {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  // Initialize device fingerprint immediately
-  useEffect(() => {
-    if (!localStorage.getItem('ants_dev_sig')) {
-      localStorage.setItem('ants_dev_sig', crypto.randomUUID());
-    }
-  }, []);
 
   // Sync step with auth state
   useEffect(() => {

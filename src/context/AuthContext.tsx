@@ -22,6 +22,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const lastActivityRef = useRef<number>(Date.now());
 
+  useEffect(() => {
+    if (!localStorage.getItem('ants_dev_sig')) {
+      localStorage.setItem('ants_dev_sig', crypto.randomUUID());
+    }
+  }, []);
+
   const fetchProfile = async (userId: string) => {
     const profileData = await getProfile(userId);
     setProfile(profileData);
@@ -129,17 +135,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     };
   }, [checkTimeout]);
 
+  const contextValue = React.useMemo(() => ({
+    user,
+    profile,
+    loading,
+    isDarkMode,
+    signOut,
+    refreshProfile,
+    toggleDarkMode,
+    updateActivity
+  }), [user, profile, loading, isDarkMode, signOut, refreshProfile, updateActivity]);
+
   return (
-    <AuthContext.Provider value={{
-      user,
-      profile,
-      loading,
-      isDarkMode,
-      signOut,
-      refreshProfile,
-      toggleDarkMode,
-      updateActivity
-    }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
