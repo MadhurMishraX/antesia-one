@@ -194,57 +194,12 @@ export default function AdminPanel() {
 
   const pageSize = 25;
 
-  // --- Auth & PIN Session Check ---
-  const verificationInProgress = React.useRef(false);
-
+  // --- Auth Check ---
   useEffect(() => {
-    const checkPinVerification = async () => {
-      // If we're already checking, or don't have a profile yet, skip
-      if (verificationInProgress.current || !profile || profile.role !== 'admin') return;
-      
-      try {
-        verificationInProgress.current = true;
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        // If no session, the AuthProvider will handle the redirect
-        if (!session) return;
-
-        const fingerprint = localStorage.getItem('ants_dev_sig') || 'unknown';
-        const response = await fetch('/api/verify-session', {
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'X-Device-Fingerprint': fingerprint
-          }
-        });
-
-        // Only act if the response is explicitly 401 or verified is false
-        // Ignore 500s or network errors to prevent aggressive logouts
-        if (response.status === 401) {
-          const result = await response.json();
-          if (result.verified === false) {
-            throw new Error('PIN verification expired');
-          }
-        }
-        
-        if (response.ok) {
-          sessionStorage.setItem('admin_verified', 'true');
-        }
-      } catch (err: any) {
-        console.error('Security heartbeat check failed:', err);
-        
-        // Only kick out if it's a verification failure, not a network error
-        if (err.message === 'PIN verification expired') {
-          sessionStorage.removeItem('admin_verified');
-          signOut();
-          navigate('/admin-login', { replace: true });
-        }
-      } finally {
-        verificationInProgress.current = false;
-      }
-    };
-
-    checkPinVerification();
-  }, [profile?.id, navigate, signOut]); // Only re-run if the user ID changes
+    if (profile && profile.role !== 'admin') {
+      navigate('/', { replace: true });
+    }
+  }, [profile, navigate]);
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type });
