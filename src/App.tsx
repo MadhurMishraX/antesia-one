@@ -103,11 +103,19 @@ function AppRoutes() {
 
   // Admin Access
   if (profile?.role === 'admin') {
+    const isVerified = sessionStorage.getItem('admin_verified') === 'true';
+    const isAtAdminLogin = location.pathname === '/admin-login';
+    
+    // If not verified, they MUST go to /admin-login
+    if (!isVerified && !isAtAdminLogin) {
+      return <Navigate to="/admin-login" replace />;
+    }
+
     return (
       <Routes>
-        <Route path="/admin" element={<AdminPanel />} />
-        <Route path="/admin-login" element={<Navigate to="/admin" replace />} />
-        <Route path="*" element={<Navigate to="/admin" replace />} />
+        <Route path="/admin" element={isVerified ? <AdminPanel /> : <Navigate to="/admin-login" replace />} />
+        <Route path="/admin-login" element={isVerified ? <Navigate to="/admin" replace /> : <AdminLogin />} />
+        <Route path="*" element={<Navigate to={isVerified ? "/admin" : "/admin-login"} replace />} />
       </Routes>
     );
   }

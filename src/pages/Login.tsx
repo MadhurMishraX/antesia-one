@@ -53,10 +53,9 @@ export default function Login() {
         .single();
 
       if (profile && profile.role === 'admin') {
-        // Admin logged in, bypass PIN verification and go straight to admin control panel
+        // Admin logged in, redirect to admin-login for PIN verification
         setLoading(false);
-        sessionStorage.setItem('admin_verified', 'true');
-        navigate('/admin', { replace: true });
+        navigate('/admin-login', { replace: true });
         return;
       }
 

@@ -8,9 +8,11 @@ import { ADMIN_EMAIL } from '../config';
 
 export default function AdminLogin() {
   const { user, profile, loading: authLoading } = useAuth();
+  const [step, setStep] = useState<'credentials' | 'pin'>('credentials');
   const [isInitializing, setIsInitializing] = useState(true);
   const [email, setEmail] = useState(ADMIN_EMAIL);
   const [password, setPassword] = useState('');
+  const [pin, setPin] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -20,11 +22,16 @@ export default function AdminLogin() {
     if (authLoading) return;
 
     if (user && profile?.role === 'admin') {
-      sessionStorage.setItem('admin_verified', 'true');
-      navigate('/admin', { replace: true });
+      const isVerified = sessionStorage.getItem('admin_verified') === 'true';
+      if (isVerified) {
+        navigate('/admin', { replace: true });
+      } else {
+        setStep('pin');
+      }
     } else if (user && profile?.role !== 'admin') {
       // If logged in as non-admin, kick them out
       supabase.auth.signOut();
+      setStep('credentials');
     }
     
     setIsInitializing(false);
@@ -86,12 +93,80 @@ export default function AdminLogin() {
         throw new Error('Unauthorized: Admin access only');
       }
 
-      // Success
+      // Success phase 1 — move to PIN step
       await logAttempt('success', data.user.id);
-      sessionStorage.setItem('admin_verified', 'true');
-      navigate('/admin', { replace: true });
+      setStep('pin');
     } catch (err: any) {
       setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePinSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Get the current session token for server-side verification
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session?.access_token) {
+        throw new Error('Session expired. Please log in again.');
+      }
+
+      const fingerprint = localStorage.getItem('ants_dev_sig') || 'unknown';
+
+      // Verify PIN server-side via the serverless function
+      const response = await fetch('/api/verify-pin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+          'X-Device-Fingerprint': fingerprint,
+        },
+        body: JSON.stringify({ pin }),
+      });
+
+      let verified = false;
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        const result = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error || 'PIN verification failed');
+        }
+        verified = result.verified;
+      } else {
+        // Local development fallback (Vite SPA HTML fallback on /api routes)
+        console.warn('API verification not available, using local dev verification fallback.');
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        if (isLocalhost) {
+          const devPin = import.meta.env.VITE_ADMIN_PIN || '123456';
+          if (pin === devPin) {
+            verified = true;
+          } else {
+            throw new Error('Invalid PIN (Dev Mode)');
+          }
+        } else {
+          throw new Error('Server API not responding with JSON');
+        }
+      }
+
+      if (verified) {
+        // PIN verified — grant access
+        sessionStorage.setItem('admin_verified', 'true');
+        navigate('/admin');
+      } else {
+        throw new Error('PIN verification failed');
+      }
+    } catch (err: any) {
+      // On failure, sign out and reset
+      await supabase.auth.signOut();
+      setError(err.message || 'Access denied: Invalid PIN');
+      setStep('credentials');
+      setPin('');
+      setPassword('');
     } finally {
       setLoading(false);
     }
@@ -111,82 +186,140 @@ export default function AdminLogin() {
       >
         <div className="flex flex-col items-center text-center mb-10">
           <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-primary mb-6 border border-primary/20">
-            <Lock size={32} />
+            {step === 'credentials' ? <Lock size={32} /> : <ShieldCheck size={32} />}
           </div>
           <h1 className="text-3xl font-black tracking-tight text-white mb-2">
             ANTESIA <span className="text-primary">ADMIN</span>
           </h1>
           <p className="text-slate-400 text-sm font-medium">
-            Secure Internal Access
+            {step === 'credentials' ? 'Secure Internal Access' : 'Two-Factor Authentication'}
           </p>
         </div>
 
-        <form 
-          onSubmit={handleCredentialsLogin}
-          className="space-y-6"
-        >
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Admin Email</label>
-              <input 
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-primary/50 focus:bg-white/[0.07] transition-all"
-                placeholder="admin@antesia.internal"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Password</label>
-              <input 
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-primary/50 focus:bg-white/[0.07] transition-all"
-                placeholder="••••••••"
-                required
-              />
-            </div>
-          </div>
-
-          {error && (
-            <motion.div 
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3 text-red-400 text-sm font-medium"
+        <AnimatePresence mode="wait">
+          {step === 'credentials' ? (
+            <motion.form 
+              key="credentials"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              onSubmit={handleCredentialsLogin}
+              className="space-y-6"
             >
-              <AlertCircle size={18} />
-              {error}
-            </motion.div>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Admin Email</label>
+                  <input 
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-primary/50 focus:bg-white/[0.07] transition-all"
+                    placeholder="admin@antesia.internal"
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">Password</label>
+                  <input 
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:border-primary/50 focus:bg-white/[0.07] transition-all"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3 text-red-400 text-sm font-medium"
+                >
+                  <AlertCircle size={18} />
+                  {error}
+                </motion.div>
+              )}
+
+              <button 
+                type="submit"
+                disabled={loading}
+                className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold py-4 rounded-2xl shadow-xl shadow-primary/20 flex items-center justify-center gap-2 group transition-all active:scale-[0.98]"
+              >
+                {loading ? (
+                  <Loader2 className="animate-spin" size={20} />
+                ) : (
+                  <>
+                    Continue to Verification
+                    <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </button>
+            </motion.form>
+          ) : (
+            <motion.form 
+              key="pin"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+              onSubmit={handlePinSubmit}
+              className="space-y-6"
+            >
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-widest ml-1">6-Digit Admin PIN</label>
+                <input 
+                  type="text"
+                  maxLength={6}
+                  value={pin}
+                  onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-white text-center text-3xl tracking-[1em] placeholder:text-slate-600 focus:outline-none focus:border-primary/50 focus:bg-white/[0.07] transition-all font-mono"
+                  placeholder="••••••"
+                  autoFocus
+                  required
+                />
+              </div>
+
+              {error && (
+                <motion.div 
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-red-500/10 border border-red-500/20 rounded-xl p-4 flex items-center gap-3 text-red-400 text-sm font-medium"
+                >
+                  <AlertCircle size={18} />
+                  {error}
+                </motion.div>
+              )}
+
+              <button 
+                type="submit"
+                disabled={loading || pin.length !== 6}
+                className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold py-4 rounded-2xl shadow-xl shadow-primary/20 flex items-center justify-center gap-2 group transition-all active:scale-[0.98]"
+              >
+                {loading ? (
+                  <Loader2 className="animate-spin" size={20} />
+                ) : (
+                  <>
+                    Verify & Access Panel
+                    <ShieldCheck size={18} />
+                  </>
+                )}
+              </button>
+
+              <button 
+                type="button"
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  setStep('credentials');
+                  navigate('/', { replace: true });
+                }}
+                className="w-full text-slate-500 hover:text-slate-300 text-xs font-bold uppercase tracking-widest transition-colors"
+              >
+                Cancel & Logout
+              </button>
+            </motion.form>
           )}
-
-          <button 
-            type="submit"
-            disabled={loading}
-            className="w-full bg-primary hover:bg-primary/90 disabled:opacity-50 text-white font-bold py-4 rounded-2xl shadow-xl shadow-primary/20 flex items-center justify-center gap-2 group transition-all active:scale-[0.98]"
-          >
-            {loading ? (
-              <Loader2 className="animate-spin" size={20} />
-            ) : (
-              <>
-                Login & Access Panel
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-              </>
-            )}
-          </button>
-
-          <button 
-            type="button"
-            onClick={async () => {
-              await supabase.auth.signOut();
-              navigate('/', { replace: true });
-            }}
-            className="w-full text-slate-500 hover:text-slate-300 text-xs font-bold uppercase tracking-widest transition-colors"
-          >
-            Cancel & Logout
-          </button>
-        </form>
+        </AnimatePresence>
       </motion.div>
 
       <div className="fixed bottom-8 text-slate-600 text-[10px] font-bold uppercase tracking-[0.2em]">

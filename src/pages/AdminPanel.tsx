@@ -1258,17 +1258,7 @@ export default function AdminPanel() {
 
         <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
           <NavItem active={activeSection === 'overview'} onClick={() => setActiveSection('overview')} icon={<LayoutDashboard size={20} />} label="Overview" />
-          <div 
-            onClick={() => {
-              const newCount = secretCount + 1;
-              setSecretCount(newCount);
-              if (newCount === 7) {
-                setSecretUnlocked(true);
-                showToast('🔒 Security Module Unlocked', 'success');
-              }
-            }}
-            className="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest cursor-default select-none transition-colors hover:text-slate-300"
-          >
+          <div className="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
             Management
           </div>
           <NavItem active={activeSection === 'users'} onClick={() => setActiveSection('users')} icon={<Users size={20} />} label="Users" />
@@ -1280,9 +1270,7 @@ export default function AdminPanel() {
           <NavItem active={activeSection === 'notifications'} onClick={() => setActiveSection('notifications')} icon={<Bell size={20} />} label="Notifications" />
           <div className="pt-4 pb-2 px-4 text-[10px] font-bold text-slate-400 uppercase tracking-widest">System</div>
           <NavItem active={activeSection === 'storage'} onClick={() => setActiveSection('storage')} icon={<Database size={20} />} label="Storage Cleanup" />
-          {secretUnlocked && (
-            <NavItem active={activeSection === 'security'} onClick={() => setActiveSection('security')} icon={<ShieldCheck size={20} />} label="Security Audit" />
-          )}
+          <NavItem active={activeSection === 'security'} onClick={() => setActiveSection('security')} icon={<ShieldCheck size={20} />} label="Security Audit" />
         </nav>
 
         <div className="p-6 border-t border-gray-100">
