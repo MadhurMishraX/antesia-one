@@ -138,7 +138,7 @@ Create a `.env` file in the root directory:
 ---
 
 ## 📄 License
-This project is licensed under the **GNU General Public License v2.0** - see the [LICENSE](./LICENSE) file for details.
+This project is licensed under the **Apache License 2.0** - see the [LICENSE](./LICENSE) file for details.
 
 ---
 
